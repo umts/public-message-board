@@ -1,3 +1,5 @@
+import useConfig from './hooks/useConfig.js';
+
 /**
  * TODO: Implement.
  *
@@ -5,7 +7,10 @@
  * @return {JSX.Element}
  */
 function App() {
-  return (<>Hello, World!</>);
+  const {routes} = useConfig();
+  return (
+    <div>{!(routes) ? 'No routes given' : routes.join(', ')}</div>
+  );
 }
 
 export default App;

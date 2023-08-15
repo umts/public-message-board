@@ -31,7 +31,7 @@ export default function usePublicMessages(infoPoint, routes) {
   const refreshPublicMessages = useCallback(() => {
     fetchPublicMessages(infoPoint).then((publicMessages) => {
       setPublicMessages(publicMessages);
-    }).catch((e) => {
+    }).catch(() => {
       setPublicMessages(null);
     });
   }, [infoPoint, setPublicMessages]);
@@ -74,7 +74,6 @@ async function fetchPublicMessages(infoPoint) {
   const publicMessages = [];
   const getCurrentMessagesResponse = await fetch(new URL('PublicMessages/GetCurrentMessages', infoPoint));
   const getCurrentMessagesJSON = await getCurrentMessagesResponse.json();
-
   getCurrentMessagesJSON.forEach((publicMessage) => {
     publicMessage['Routes'].forEach((routeId) => {
       const route = routesById[routeId] || {};

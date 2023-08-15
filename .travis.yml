@@ -5,13 +5,13 @@ node_js:
 jobs:
   include:
     - stage: lint
-      name: eslint
+      name: lint
       script: npm run lint
     - stage: lint
-      name: stylelint
+      name: lint:css
       script: npm run lint:css
     - stage: build
-      name: vite
+      name: build
       script: npm run build
 stages:
   - lint

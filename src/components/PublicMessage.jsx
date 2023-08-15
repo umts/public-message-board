@@ -7,17 +7,21 @@ import classNames from './PublicMessage.module.css';
  * @constructor
  * @param {String|null} routeAbbreviation - an optional route abbreviation to label this message with.
  * @param {String|null} routeColor - an optional background color override for the route label.
+ * @param {String|null} routeTextColor - an optional text color override for the route label.
  * @param {String} message - the text content of the message to be displayed.
  * @return {JSX.Element}
  */
-export default function PublicMessage({routeAbbreviation, routeColor, message}) {
+export default function PublicMessage({routeAbbreviation, routeColor, routeTextColor, message}) {
   return (
     <tr>
       {(routeAbbreviation) && (
         <th scope={'row'}>
           <div
             className={classNames['route-abbreviation']}
-            style={{backgroundColor: !(routeColor) ? undefined : `#${routeColor}`}}
+            style={{
+              backgroundColor: !(routeColor) ? undefined : `#${routeColor}`,
+              color: !(routeTextColor) ? undefined: `#${routeTextColor}`,
+            }}
           >
             {routeAbbreviation}
           </div>
@@ -33,5 +37,6 @@ export default function PublicMessage({routeAbbreviation, routeColor, message}) 
 PublicMessage.propTypes = {
   routeAbbreviation: PropTypes.string,
   routeColor: PropTypes.string,
+  routeTextColor: PropTypes.string,
   message: PropTypes.string.isRequired,
 };

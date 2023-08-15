@@ -5,8 +5,10 @@ import {useCallback, useEffect, useMemo, useState} from 'react';
  * @property {String} key - a unique key for a route/message pair.
  * @property {String} message - the text for a public message.
  * @property {String|null} routeAbbreviation - a short name for a route if applicable, null if the message is general.
- * @property {String|null} routeColor - a color (hex string but without #) override for a route if applicable,
- *                                      null if the message is general.
+ * @property {String|null} routeColor - a color (hex string but without #) override for a route's background if
+ *                                      applicable, null if the message is general.
+ * @property {String|null} routeTextColor - a color (hex string but without #) override for a route's text if
+ *                                          applicable, null if the message is general.
  */
 
 /**
@@ -82,6 +84,7 @@ async function fetchPublicMessages(infoPoint) {
         message: publicMessage['Message'],
         routeAbbreviation: route['RouteAbbreviation'] || null,
         routeColor: route['Color'] || null,
+        routeTextColor: route['TextColor'] || null,
       });
     });
   });

@@ -1,36 +1,27 @@
+import PublicMessage from './components/PublicMessage.jsx';
+import PublicMessageBoard from './components/PUblicMessageBoard.jsx';
 import useConfig from './hooks/useConfig.js';
 import usePublicMessages from './hooks/usePublicMessages.js';
 
 /**
- * TODO: Implement.
+ * Main application component.
  *
  * @constructor
  * @return {JSX.Element}
  */
-function App() {
+export default function App() {
   const {infoPoint, routes} = useConfig();
   const publicMessages = usePublicMessages(infoPoint, routes);
 
   return (
-    <>
-      <div>{infoPoint?.toString()}</div>
-      <hr />
-      <div>{!(routes) ? 'No routes given' : routes.join(', ')}</div>
-      {!!(publicMessages) && publicMessages.map((publicMessage) => (
-        <div key={publicMessage.key}>
-          <hr />
-          <dl>
-            <dt>Message</dt>
-            <dd>{publicMessage.message}</dd>
-            <dt>Route Abbreviation</dt>
-            <dd>{publicMessage.routeAbbreviation}</dd>
-            <dt>Route Color</dt>
-            <dd>{publicMessage.routeColor}</dd>
-          </dl>
-        </div>
+    <PublicMessageBoard>
+      {(publicMessages === undefined) ? null : (publicMessages === null) ? (
+        <PublicMessage message={'Failed to load message information.'}/>
+      ) : (publicMessages.length === 0) ? (
+        <PublicMessage message={'No relevant messages found.'}/>
+      ) : publicMessages.map(({key, ...message}) => (
+        <PublicMessage key={key} {...message} />
       ))}
-    </>
+    </PublicMessageBoard>
   );
 }
-
-export default App;

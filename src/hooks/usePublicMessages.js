@@ -56,9 +56,6 @@ async function fetchPublicMessages(infoPoint) {
   const getCurrentMessagesResponse = await fetch(new URL('PublicMessages/GetCurrentMessages', infoPoint));
   const getCurrentMessagesJSON = await getCurrentMessagesResponse.json();
 
-  // TODO: REMOVE.
-  (getCurrentMessagesJSON[0] || {})['Routes']?.push('999');
-
   getCurrentMessagesJSON.forEach((publicMessage) => {
     publicMessage['Routes'].forEach((routeId) => {
       const route = routesById[routeId] || {};
@@ -69,12 +66,6 @@ async function fetchPublicMessages(infoPoint) {
         routeColor: route['Color'] || null,
       });
     });
-  });
-
-  // TODO: REMOVE.
-  publicMessages.push({messageID: 12345, message: 'general message (undefined)'});
-  publicMessages.push({
-    messageID: 6789, message: 'general message (blank)', routeID: '', routeAbbreviation: '', routeColor: '',
   });
 
   return publicMessages;

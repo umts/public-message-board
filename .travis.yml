@@ -4,7 +4,15 @@ node_js:
   - lts/*
 jobs:
   include:
-    - name: Job 1
-      script: echo "Hello, World! 1"
-    - name: Job 2
-      script: echo "Hello, World! 2"
+    - stage: lint
+      name: eslint
+      script: npm run lint
+    - stage: lint
+      name: stylelint
+      script: npm run lint:css
+    - stage: build
+      name: vite
+      script: npm run build
+stages:
+  - lint
+  - build

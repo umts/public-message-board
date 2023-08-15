@@ -1,4 +1,4 @@
-@import "@fontsource/open-sans";
+@import url("@fontsource/open-sans");
 
 :root {
   font-family: "Open Sans", sans-serif;

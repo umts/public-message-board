@@ -15,7 +15,9 @@ export default function App() {
 
   return (
     <PublicMessageBoard>
-      {(publicMessages === undefined) ? null : (publicMessages === null) ? (
+      {(publicMessages === undefined) ? (
+        <></>
+      ) : (publicMessages === null) ? (
         <PublicMessage message={'Failed to load message information.'}/>
       ) : (publicMessages.length === 0) ? (
         <PublicMessage message={'No relevant messages found.'}/>

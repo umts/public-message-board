@@ -1,6 +1,10 @@
-dist: xenial
+dist: jammy
 language: node_js
 node_js:
   - lts/*
-script:
-  - echo "Hello, World!"
+jobs:
+  include:
+    - name: Job 1
+      script: echo "Hello, World! 1"
+    - name: Job 2
+      script: echo "Hello, World! 2"

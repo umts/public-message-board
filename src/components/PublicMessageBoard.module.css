@@ -1,10 +1,21 @@
 .public-message-board {
-  --message-board-border-color: #00000020;
-  --message-board-border-radius: 0.375rem;
+  --public-message-board-border-color: #00000020;
 
+  border: 1px solid var(--public-message-board-border-color);
   border-collapse: separate;
+  border-radius: 0.375rem;
   border-spacing: 0;
   width: 100%;
+}
+
+.public-message-board th,
+.public-message-board td {
+  border-bottom: 1px solid var(--public-message-board-border-color);
+}
+
+.public-message-board tr:last-child th,
+.public-message-board tr:last-child td {
+  border-bottom: none;
 }
 
 .public-message-board th {
@@ -15,44 +26,4 @@
 
 .public-message-board td {
   padding: 1rem;
-}
-
-.public-message-board th,
-.public-message-board td {
-  border-top: 1px solid var(--message-board-border-color);
-}
-
-.public-message-board th:first-child,
-.public-message-board td:first-child {
-  border-left: 1px solid var(--message-board-border-color);
-}
-
-.public-message-board th:last-child,
-.public-message-board td:last-child {
-  border-right: 1px solid var(--message-board-border-color);
-}
-
-.public-message-board tr:last-child th,
-.public-message-board tr:last-child td {
-  border-bottom: 1px solid var(--message-board-border-color);
-}
-
-.public-message-board tr:first-child th:first-child,
-.public-message-board tr:first-child td:first-child {
-  border-top-left-radius: var(--message-board-border-radius);
-}
-
-.public-message-board tr:first-child th:last-child,
-.public-message-board tr:first-child td:last-child {
-  border-top-right-radius: var(--message-board-border-radius);
-}
-
-.public-message-board tr:last-child th:first-child,
-.public-message-board tr:last-child td:first-child {
-  border-bottom-left-radius: var(--message-board-border-radius);
-}
-
-.public-message-board tr:last-child th:last-child,
-.public-message-board tr:last-child td:last-child {
-  border-bottom-right-radius: var(--message-board-border-radius);
 }

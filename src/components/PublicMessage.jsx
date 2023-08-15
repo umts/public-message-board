@@ -14,7 +14,7 @@ export default function PublicMessage({routeAbbreviation, routeColor, message}) 
   return (
     <tr>
       {(routeAbbreviation) && (
-        <th>
+        <th scope={'row'}>
           <div
             className={classNames['route-abbreviation']}
             style={{backgroundColor: !(routeColor) ? undefined : `#${routeColor}`}}

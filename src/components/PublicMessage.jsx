@@ -24,9 +24,7 @@ export default function PublicMessage({routeAbbreviation, routeColor, message}) 
         </th>
       )}
       <td colSpan={(routeAbbreviation) ? 1 : 2}>
-        <div>
-          {message}
-        </div>
+        {message}
       </td>
     </tr>
   );

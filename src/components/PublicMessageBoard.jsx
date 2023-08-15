@@ -2,10 +2,12 @@ import PropTypes from 'prop-types';
 import classNames from './PublicMessageBoard.module.css';
 
 /**
- * Renders a given set of public messages.
+ * Component that acts as a container and provides styling for {@link PublicMessage}s.
+ *
+ * - Implemented using a table for the sake of equal-width route abbreviation labels.
  *
  * @constructor
- * @param {[Message]} children
+ * @param {[PublicMessage]} children - the public messages to display within this message board.
  * @return {JSX.Element}
  */
 export default function PublicMessageBoard({children}) {

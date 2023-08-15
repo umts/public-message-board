@@ -4,7 +4,7 @@ import useConfig from './hooks/useConfig.js';
 import usePublicMessages from './hooks/usePublicMessages.js';
 
 /**
- * Main application component.
+ * Application entrypoint.
  *
  * @constructor
  * @return {JSX.Element}

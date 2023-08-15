@@ -1,11 +1,29 @@
 import {useCallback, useEffect, useMemo, useState} from 'react';
 
 /**
- * Stores, maintains and processes public message data from an Avail InfoPoint API.
+ * @typedef PublicMessageObject
+ * @property {String} key - a unique key for a route/message pair.
+ * @property {String} message - the text for a public message.
+ * @property {String|null} routeAbbreviation - a short name for a route if applicable, null if the message is general.
+ * @property {String|null} routeColor - a color (hex string but without #) override for a route if applicable,
+ *                                      null if the message is general.
+ */
+
+/**
+ * Hook responsible for fetching, storing, maintaining and processing public message data from a remote Avail InfoPoint
+ * API endpoint.
  *
- * @param {null|URL} infoPoint
- * @param {null|[String]} routes
- * @return {undefined|null|[{}]}
+ * - Will return `undefined` if data has not yet been fetched yet.
+ * - Will return `null` if an error occurs during fetching.
+ * - Will re-fetch and re-process data periodically.
+ * - Will sort public messages with general (routeless) messages first, then by number (route abbreviation substring),
+ *   then lexically by route abbreviation and message.
+ * - Will apply filtering by route abbreviation if provided, always letting general message through.
+ * - Gives general messages a fake route abbreviation.
+ *
+ * @param {URL} infoPoint - the URL of the InfoPoint API from which to get public message data.
+ * @param {[String]|null} routes - a list of route abbreviations to whitelist, null if no filtering is to be applied.
+ * @return {[PublicMessageObject]|null|undefined}
  */
 function usePublicMessages(infoPoint, routes) {
   const [publicMessages, setPublicMessages] = useState(undefined);
@@ -42,7 +60,8 @@ function usePublicMessages(infoPoint, routes) {
  * Fetches public message data from an Avail InfoPoint API.
  *
  * @param {URL} infoPoint
- * @return {Promise<[{}]>}
+ * @return {Promise<[PublicMessageObject]>}
+ * @see {usePublicMessages}
  */
 async function fetchPublicMessages(infoPoint) {
   const routesById = {};
@@ -73,9 +92,10 @@ async function fetchPublicMessages(infoPoint) {
 
 /** Compares two public messages for sorting purposes.
  *
- * @param {{}} publicMessage1
- * @param {{}} publicMessage2
+ * @param {PublicMessageObject} publicMessage1
+ * @param {PublicMessageObject} publicMessage2
  * @return {Number}
+ * @see {usePublicMessages}
  */
 function comparePublicMessages(publicMessage1, publicMessage2) {
   const [route1, route2] = [publicMessage1.routeAbbreviation, publicMessage2.routeAbbreviation];

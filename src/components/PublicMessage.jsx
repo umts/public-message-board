@@ -2,12 +2,12 @@ import PropTypes from 'prop-types';
 import classNames from './PublicMessage.module.css';
 
 /**
- * Renders a single public message.
+ * Component that displaying a message within a {@link PublicMessageBoard}.
  *
  * @constructor
- * @param {String?} route
- * @param {String?} routeColor
- * @param {String} message
+ * @param {String|null} routeAbbreviation - an optional route abbreviation to label this message with.
+ * @param {String|null} routeColor - an optional background color override for the route label.
+ * @param {String} message - the text content of the message to be displayed.
  * @return {JSX.Element}
  */
 export default function PublicMessage({routeAbbreviation, routeColor, message}) {

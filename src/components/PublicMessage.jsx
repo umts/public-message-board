@@ -20,7 +20,7 @@ export default function PublicMessage({routeAbbreviation, routeColor, routeTextC
             className={classNames['route-abbreviation']}
             style={{
               backgroundColor: !(routeColor) ? undefined : `#${routeColor}`,
-              color: !(routeTextColor) ? undefined: `#${routeTextColor}`,
+              color: !(routeTextColor) ? undefined : `#${routeTextColor}`,
             }}
           >
             {routeAbbreviation}

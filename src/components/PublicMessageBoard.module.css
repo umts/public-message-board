@@ -8,16 +8,6 @@
   width: 100%;
 }
 
-.public-message-board th,
-.public-message-board td {
-  border-bottom: 1px solid var(--public-message-board-border-color);
-}
-
-.public-message-board tr:last-child th,
-.public-message-board tr:last-child td {
-  border-bottom: none;
-}
-
 .public-message-board th {
   padding: 1rem 0 1rem 1rem;
   vertical-align: top;
@@ -26,4 +16,14 @@
 
 .public-message-board td {
   padding: 1rem;
+}
+
+.public-message-board th,
+.public-message-board td {
+  border-bottom: 1px solid var(--public-message-board-border-color);
+}
+
+.public-message-board tr:last-child th,
+.public-message-board tr:last-child td {
+  border-bottom: none;
 }

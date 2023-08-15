@@ -10,12 +10,12 @@ import {useMemo} from 'react';
  * Hook responsible for parsing application configuration options from the window location's current search query.
  *
  * - `infoPoint` optionally parses a fully qualified url in the search params.
- * - `infoPoint` will add a trailing / if it is not present.
+ * - `infoPoint` will have a trailing / appended if it is not present.
  * - `infoPoint` will default to the PVTA InfoPoint installation if none is provided.
- * - `infoPoint` will be `null` if the a parsing error is encountered.
+ * - `infoPoint` will be `null` if a parsing error occurs.
  * - `routes` optionally parses a comma-separated list of route abbreviations in the search params.
- * - `routes` will filter out blank values.
- * - `routes` will be default to `null` if none is provided.
+ * - `routes` will have blank values filtered out.
+ * - `routes` will default to `null` if no option is provided.
  *
  * @example
  * // https://example.com/?infoPoint=https://example.com/InfoPoint/rest&routes=A1,B2

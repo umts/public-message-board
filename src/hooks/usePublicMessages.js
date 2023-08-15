@@ -19,13 +19,13 @@ import {useCallback, useEffect, useMemo, useState} from 'react';
  * - Will sort public messages with general (routeless) messages first, then by number (route abbreviation substring),
  *   then lexically by route abbreviation and message.
  * - Will apply filtering by route abbreviation if provided, always letting general message through.
- * - Gives general messages a fake route abbreviation.
+ * - Will give general messages a fake route abbreviation.
  *
  * @param {URL} infoPoint - the URL of the InfoPoint API from which to get public message data.
  * @param {[String]|null} routes - a list of route abbreviations to whitelist, null if no filtering is to be applied.
  * @return {[PublicMessageObject]|null|undefined}
  */
-function usePublicMessages(infoPoint, routes) {
+export default function usePublicMessages(infoPoint, routes) {
   const [publicMessages, setPublicMessages] = useState(undefined);
 
   const refreshPublicMessages = useCallback(() => {
@@ -117,5 +117,3 @@ function comparePublicMessages(publicMessage1, publicMessage2) {
     return route1.localeCompare(route2);
   }
 }
-
-export default usePublicMessages;

@@ -1,5 +1,5 @@
 import PublicMessage from './components/PublicMessage.jsx';
-import PublicMessageBoard from './components/PUblicMessageBoard.jsx';
+import PublicMessageBoard from './components/PublicMessageBoard.jsx';
 import useConfig from './hooks/useConfig.js';
 import usePublicMessages from './hooks/usePublicMessages.js';
 

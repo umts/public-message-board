@@ -1,4 +1,5 @@
 import useConfig from './hooks/useConfig.js';
+import usePublicMessages from './hooks/usePublicMessages.js';
 
 /**
  * TODO: Implement.
@@ -7,9 +8,28 @@ import useConfig from './hooks/useConfig.js';
  * @return {JSX.Element}
  */
 function App() {
-  const {routes} = useConfig();
+  const {infoPoint, routes} = useConfig();
+  const publicMessages = usePublicMessages(infoPoint, routes);
+
   return (
-    <div>{!(routes) ? 'No routes given' : routes.join(', ')}</div>
+    <>
+      <div>{infoPoint?.toString()}</div>
+      <hr />
+      <div>{!(routes) ? 'No routes given' : routes.join(', ')}</div>
+      {!!(publicMessages) && publicMessages.map((publicMessage) => (
+        <div key={publicMessage.key}>
+          <hr />
+          <dl>
+            <dt>Message</dt>
+            <dd>{publicMessage.message}</dd>
+            <dt>Route Abbreviation</dt>
+            <dd>{publicMessage.routeAbbreviation}</dd>
+            <dt>Route Color</dt>
+            <dd>{publicMessage.routeColor}</dd>
+          </dl>
+        </div>
+      ))}
+    </>
   );
 }
 

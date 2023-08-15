@@ -1,17 +1,43 @@
 import {useMemo} from 'react';
 
 /**
- * Parses configuration options from url search parameters.
+ * Parses an application configuration from URLSearchParams.
  *
- * @return {{routes: Array<String>?}}
+ * @return {{}}
  */
-function useConfig() {
+export default function useConfig() {
   return useMemo(() => {
     const searchParams = new URLSearchParams(location.search);
     return {
-      routes: searchParams.get('routes')?.split(','),
+      infoPoint: parseInfoPoint(searchParams.get('infoPoint')),
+      routes: parseRoutes(searchParams.get('routes')),
     };
   }, []);
 }
 
-export default useConfig;
+/**
+ * Parses an InfoPoint rest API URL.
+ *
+ * @param {null|String} arg
+ * @return {null|URL}
+ */
+function parseInfoPoint(arg) {
+  arg ??= 'https://bustracker.pvta.com/InfoPoint/rest/';
+  try {
+    const url = new URL(arg);
+    if (!(url.pathname.endsWith('/'))) url.pathname = `${url.pathname}/`;
+    return url;
+  } catch {
+    return null;
+  }
+}
+
+/**
+ * Parses a list of route abbreviations.
+ *
+ * @param {null|String} arg
+ * @return {null|[String]}
+ */
+function parseRoutes(arg) {
+  return arg?.split(',')?.filter((route) => !!(route)) || null;
+}

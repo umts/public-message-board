@@ -2,7 +2,7 @@ import PropTypes from 'prop-types';
 import classNames from './PublicMessage.module.css';
 
 /**
- * Component that displaying a message within a {@link PublicMessageBoard}.
+ * Component that displays a message within a {@link PublicMessageBoard}.
  *
  * @constructor
  * @param {String|null} routeAbbreviation - an optional route abbreviation to label this message with.

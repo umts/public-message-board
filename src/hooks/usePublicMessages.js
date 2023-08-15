@@ -9,6 +9,7 @@ import {useCallback, useEffect, useMemo, useState} from 'react';
  *                                      applicable, null if the message is general.
  * @property {String|null} routeTextColor - a color (hex string but without #) override for a route's text if
  *                                          applicable, null if the message is general.
+ * @property {Number|null} routeSortOrder - a pre-set sort order for the route if applicable.
  */
 
 /**
@@ -18,8 +19,8 @@ import {useCallback, useEffect, useMemo, useState} from 'react';
  * - Will return `undefined` if data has not yet been fetched yet.
  * - Will return `null` if an error occurs during fetching.
  * - Will re-fetch and re-process data periodically.
- * - Will sort public messages with general (routeless) messages first, then by number (route abbreviation substring),
- *   then lexically by route abbreviation and message.
+ * - Will sort public messages with general (route-less) messages first, then by the API given route sort order,
+ *   then lexically by message.
  * - Will apply filtering by route abbreviation if provided, always letting general message through.
  * - Will give general messages a fake route abbreviation.
  *
@@ -85,6 +86,7 @@ async function fetchPublicMessages(infoPoint) {
         routeAbbreviation: route['RouteAbbreviation'] || null,
         routeColor: route['Color'] || null,
         routeTextColor: route['TextColor'] || null,
+        routeSortOrder: route['SortOrder'] || null,
       });
     });
   });
@@ -100,22 +102,14 @@ async function fetchPublicMessages(infoPoint) {
  * @see {usePublicMessages}
  */
 function comparePublicMessages(publicMessage1, publicMessage2) {
-  const [route1, route2] = [publicMessage1.routeAbbreviation, publicMessage2.routeAbbreviation];
-  const [message1, message2] = [publicMessage1.message, publicMessage2.message];
-  if (!(route1) && route2) {
+  const [order1, order2] = [publicMessage1.routeSortOrder, publicMessage2.routeSortOrder];
+  if (order1 === null && order2 !== null) {
     return -1;
-  } else if (route1 && !(route2)) {
+  } else if (order1 !== null && order2 === null) {
     return 1;
-  } else if ((!(route1) && !(route2)) || (route1 === route2)) {
-    return message1.localeCompare(message2);
+  } else if (order1 !== null && order2 !== null && order1 !== order2) {
+    return order1 - order2;
   } else {
-    const numberMatch1 = route1.match(/\d+/);
-    const numberMatch2 = route2.match(/\d+/);
-    if (numberMatch1 && numberMatch2) {
-      const number1 = parseInt(numberMatch1[0]);
-      const number2 = parseInt(numberMatch2[0]);
-      if (number1 !== number2) return number1 - number2;
-    }
-    return route1.localeCompare(route2);
+    return publicMessage1.message.localeCompare(publicMessage2.message);
   }
 }

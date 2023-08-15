@@ -21,5 +21,5 @@ export default function PublicMessageBoard({children}) {
 }
 
 PublicMessageBoard.propTypes = {
-  children: PropTypes.arrayOf(PropTypes.element),
+  children: PropTypes.node,
 };

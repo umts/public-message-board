@@ -1,4 +1,4 @@
-# Avail Public Message Board
+# Public Message Board
 
 An embeddable SPA that displays live public message information for a transit organization using
 [Avail Technologies'][avail] operations software.

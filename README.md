@@ -11,7 +11,7 @@ through url search parameters.
 ### Embedding
 
 ```html
-<iframe src="PRODUCTION_URL"
+<iframe src="https://pvta-public-messages.admin.umass.edu"
         style="display: block;
                width: 100%;
                border: none;">
@@ -30,7 +30,7 @@ Configuration options are passed using url search parameters (query strings) as 
 A fully configured embedding to show messages for the UMass campus shuttle will look like:
 
 ```html
-<iframe src="PRODUCTION_URL/?infoPoint=https://bustracker.pvta.com/InfoPoint/rest&routes=34,35"
+<iframe src="https://pvta-public-messages.admin.umass.edu/?infoPoint=https://bustracker.pvta.com/InfoPoint/rest&routes=34,35"
         style="display: block;
                width: 100%;
                border: none;">

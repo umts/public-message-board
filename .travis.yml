@@ -1,0 +1,28 @@
+dist: focal
+language: node_js
+node_js:
+  - lts/*
+stages:
+  - lint
+  - build
+jobs:
+  include:
+    - stage: lint
+      name: lint
+      script: npm run lint
+    - stage: lint
+      name: lint:css
+      script: npm run lint:css
+    - stage: build
+      name: build
+      script: npm run build
+      deploy:
+        provider: pages
+        skip_cleanup: true
+        local_dir: ./dist
+        fqdn: pvta-public-messages.admin.umass.edu
+        committer_from_gh: true
+        github_token: $GITHUB_TOKEN
+        keep_history: true
+        on:
+          branch: main

@@ -1,0 +1,30 @@
+{
+  "name": "public-message-board",
+  "private": true,
+  "version": "0.0.0",
+  "type": "module",
+  "scripts": {
+    "build": "vite build",
+    "dev": "vite",
+    "lint": "eslint . --ext js,jsx",
+    "lint:css": "stylelint **/*.css **/*.module.css",
+    "preview": "vite preview"
+  },
+  "dependencies": {
+    "@fontsource/open-sans": "*",
+    "@vitejs/plugin-react": "*",
+    "prop-types": "*",
+    "react": "*",
+    "react-dom": "*",
+    "vite": "*"
+  },
+  "devDependencies": {
+    "eslint": "*",
+    "eslint-config-google":  "*",
+    "eslint-plugin-react": "*",
+    "eslint-plugin-react-hooks": "*",
+    "eslint-plugin-react-refresh": "*",
+    "stylelint": "*",
+    "stylelint-config-standard": "*"
+  }
+}

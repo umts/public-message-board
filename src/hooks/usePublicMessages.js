@@ -1,0 +1,115 @@
+import {useCallback, useEffect, useMemo, useState} from 'react';
+
+/**
+ * @typedef PublicMessageObject
+ * @property {String} key - a unique key for a route/message pair.
+ * @property {String} message - the text for a public message.
+ * @property {String|null} routeAbbreviation - a short name for a route if applicable, null if the message is general.
+ * @property {String|null} routeColor - a color (hex string but without #) override for a route's background if
+ *                                      applicable, null if the message is general.
+ * @property {String|null} routeTextColor - a color (hex string but without #) override for a route's text if
+ *                                          applicable, null if the message is general.
+ * @property {Number|null} routeSortOrder - a pre-set sort order for the route if applicable.
+ */
+
+/**
+ * Hook responsible for fetching, storing, maintaining and processing public message data from a remote Avail InfoPoint
+ * API endpoint.
+ *
+ * - Will return `undefined` if data has not yet been fetched yet.
+ * - Will return `null` if an error occurs during fetching.
+ * - Will re-fetch and re-process data periodically.
+ * - Will sort public messages with general (route-less) messages first, then by the API given route sort order,
+ *   then lexically by message.
+ * - Will apply filtering by route abbreviation if provided, always letting general message through.
+ * - Will give general messages a fake route abbreviation.
+ *
+ * @param {URL} infoPoint - the URL of the InfoPoint API from which to get public message data.
+ * @param {[String]|null} routes - a list of route abbreviations to whitelist, null if no filtering is to be applied.
+ * @return {[PublicMessageObject]|null|undefined}
+ */
+export default function usePublicMessages(infoPoint, routes) {
+  const [publicMessages, setPublicMessages] = useState(undefined);
+
+  const refreshPublicMessages = useCallback(() => {
+    fetchPublicMessages(infoPoint).then((publicMessages) => {
+      setPublicMessages(publicMessages);
+    }).catch(() => {
+      setPublicMessages(null);
+    });
+  }, [infoPoint, setPublicMessages]);
+
+  useEffect(() => {
+    refreshPublicMessages();
+    const interval = setInterval(refreshPublicMessages, 30 * 1000);
+    return () => clearInterval(interval);
+  }, [refreshPublicMessages]);
+
+  return useMemo(() => {
+    if (!(publicMessages instanceof Array)) return publicMessages;
+    return publicMessages.sort(comparePublicMessages).filter((publicMessage) => {
+      if ((routes instanceof Array) && (publicMessage.routeAbbreviation)) {
+        return routes.includes(publicMessage.routeAbbreviation);
+      } else {
+        return true;
+      }
+    }).map((publicMessage) => {
+      return {...publicMessage, routeAbbreviation: publicMessage.routeAbbreviation || 'ALL'};
+    });
+  }, [routes, publicMessages]);
+}
+
+/**
+ * Fetches public message data from an Avail InfoPoint API.
+ *
+ * @param {URL} infoPoint
+ * @return {Promise<[PublicMessageObject]>}
+ * @see {usePublicMessages}
+ */
+async function fetchPublicMessages(infoPoint) {
+  const routesById = {};
+  const getAllRoutesResponse = await fetch(new URL('Routes/GetAllRoutes', infoPoint));
+  const getAllRoutesJSON = await getAllRoutesResponse.json();
+  getAllRoutesJSON.forEach((route) => {
+    routesById[route['RouteId']] = route;
+  });
+
+  const publicMessages = [];
+  const getCurrentMessagesResponse = await fetch(new URL('PublicMessages/GetCurrentMessages', infoPoint));
+  const getCurrentMessagesJSON = await getCurrentMessagesResponse.json();
+  getCurrentMessagesJSON.forEach((publicMessage) => {
+    publicMessage['Routes'].forEach((routeId) => {
+      const route = routesById[routeId] || {};
+      publicMessages.push({
+        key: [publicMessage['MessageId'], route['RouteId']].filter((presence) => (presence)).join('-'),
+        message: publicMessage['Message'],
+        routeAbbreviation: route['RouteAbbreviation'] || null,
+        routeColor: route['Color'] || null,
+        routeTextColor: route['TextColor'] || null,
+        routeSortOrder: route['SortOrder'] || null,
+      });
+    });
+  });
+
+  return publicMessages;
+}
+
+/** Compares two public messages for sorting purposes.
+ *
+ * @param {PublicMessageObject} publicMessage1
+ * @param {PublicMessageObject} publicMessage2
+ * @return {Number}
+ * @see {usePublicMessages}
+ */
+function comparePublicMessages(publicMessage1, publicMessage2) {
+  const [order1, order2] = [publicMessage1.routeSortOrder, publicMessage2.routeSortOrder];
+  if (order1 === null && order2 !== null) {
+    return -1;
+  } else if (order1 !== null && order2 === null) {
+    return 1;
+  } else if (order1 !== null && order2 !== null && order1 !== order2) {
+    return order1 - order2;
+  } else {
+    return publicMessage1.message.localeCompare(publicMessage2.message);
+  }
+}

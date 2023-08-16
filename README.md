@@ -45,13 +45,25 @@ through [`node.js`][nodejs] + [`npm`][npm]. It is recommended that you use
 
 It is entirely clientside and data is fetched remotely from an Avail [InfoPoint API][infopoint] instance.
 
+### Requirements
+
+- `node.js`/`npm` matching the version in the `.node-version` file (just run `nodenv install` if using nodenv)
+
+### Setup
+
+```sh
+npm install # bundle dependencies
+```
+
 ### Scripts
 
-- `npm run build` builds a production bundle.
-- `npm run dev` starts a local development server.
-- `npm run lint` runs the js linter.
-- `npm run lint:css` runs the css linter.
-- `npm run preview` serves a previously built production bundle.
+```sh
+npm run build    # builds a production bundle.
+npm run dev      # starts a local development server.
+npm run lint     # runs the js linter.
+npm run lint:css # runs the css linter.
+npm run preview  # serves a previously built production bundle.
+```
 
 ## Contributing
 

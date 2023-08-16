@@ -2,6 +2,11 @@ dist: jammy
 language: node_js
 node_js:
   - lts/*
+stages:
+  - lint
+  - build
+  - name: deploy
+    if: branch = main
 jobs:
   include:
     - stage: lint
@@ -13,6 +18,15 @@ jobs:
     - stage: build
       name: build
       script: npm run build
-stages:
-  - lint
-  - build
+    - stage: deploy
+      name: deploy
+      script: npm run build
+      deploy:
+        provider: pages
+        skip_cleanup: true
+        local_dir: ./dist
+        fqdn: PRODUCTION_URL
+        github_token: $GITHUB_TOKEN
+        keep_history: true
+        on:
+          branch: main

@@ -24,7 +24,8 @@ jobs:
         skip_cleanup: true
         local_dir: ./dist
         fqdn: pvta-public-messages.admin.umass.edu
-        committer_from_gh: true
+        email: umts-public-message-board@groups.umass.edu
+        name: umts-buildbot-public-message-board
         github_token: $GITHUB_TOKEN
         keep_history: true
         on:

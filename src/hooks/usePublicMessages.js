@@ -50,7 +50,7 @@ export default function usePublicMessages(infoPoint, routes) {
   return useMemo(() => {
     if (!(publicMessages instanceof Array)) return publicMessages;
     return publicMessages.sort(comparePublicMessages).filter((publicMessage) => {
-      if (routes instanceof Array) {
+      if (routes instanceof Array && publicMessage.routes) {
         return (publicMessage.routes.filter((route) => {
           return routes.includes(route.abbreviation);
         }).length > 0);
@@ -85,7 +85,7 @@ async function fetchPublicMessages(infoPoint) {
     publicMessage['Routes'].forEach((routeId) => {
       routes.push({
         id: routeId,
-        abbreviation: routesById[routeId]['RouteAbbreviation'] || null,
+        abbreviation: routesById[routeId]['RouteAbbreviation'] || 'ALL',
         color: routesById[routeId]['Color'] || null,
         textColor: routesById[routeId]['TextColor'] || null,
         sortOrder: routesById[routeId]['SortOrder'] || null,
@@ -97,7 +97,7 @@ async function fetchPublicMessages(infoPoint) {
     publicMessages.push({
       key: publicMessage['MessageId'],
       message: publicMessage['Message'],
-      routes: routes.sort(compareRoutes) || 'ALL',
+      routes: routes.sort(compareRoutes),
       sortOrder: sortOrder,
     });
   });

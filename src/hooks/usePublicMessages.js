@@ -78,16 +78,23 @@ async function fetchPublicMessages(infoPoint) {
   const getCurrentMessagesResponse = await fetch(new URL('PublicMessages/GetCurrentMessages', infoPoint));
   const getCurrentMessagesJSON = await getCurrentMessagesResponse.json();
   getCurrentMessagesJSON.forEach((publicMessage) => {
-    publicMessage['Routes'].forEach((routeId) => {
-      const route = routesById[routeId] || {};
-      publicMessages.push({
-        key: [publicMessage['MessageId'], route['RouteId']].filter((presence) => (presence)).join('-'),
-        message: publicMessage['Message'],
-        routeAbbreviation: route['RouteAbbreviation'] || null,
-        routeColor: route['Color'] || null,
-        routeTextColor: route['TextColor'] || null,
-        routeSortOrder: route['SortOrder'] || null,
+    let sortOrder;
+    const routes = publicMessage['Routes'].reduce((routes, routeId) => {
+      routes.push({
+        routeId: routeId,
+        abbreviation: routesById[routeId]['RouteAbbreviation'] || null,
+        routeColor: routesById[routeId]['Color'] || null,
+        routeTextColor: routesById[routeId]['TextColor'] || null,
+        routeSortOrder: routesById[routeId]['SortOrder'] || null,
       });
+      if (routesById[routeId]['SortOrder'] && routesById[routeId]['SortOrder'] < sortOrder) {
+        sortOrder = routesById[routeId]['SortOrder'];
+      }
+    });
+    publicMessages.push({
+      key: publicMessage['MessageId'],
+      value: {message: publicMessage['Message'], routes: routes},
+      sortOrder: sortOrder,
     });
   });
 

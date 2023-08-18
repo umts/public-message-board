@@ -12,21 +12,23 @@ import classNames from './PublicMessage.module.css';
 export default function PublicMessage({message, routes}) {
   return (
     <tr>
-      <th scope={'row'}>
-        {routes.map((route) => (
-          <div
-            key={route.id}
-            className={classNames['route-abbreviation']}
-            style={{
-              backgroundColor: !(route.color) ? undefined : `#${route.color}`,
-              color: !(route.textColor) ? undefined : `#${route.textColor}`,
-            }}
-          >
-            {route.abbreviation}
-          </div>
-        ))}
-      </th>
-      <td colSpan={(routes) ? 1 : 2}>
+      {(routes.length > 0) && (
+        <th scope={'row'}>
+          {routes.map((route) => (
+            <div
+              key={route.id}
+              className={classNames['route-abbreviation']}
+              style={{
+                backgroundColor: !(route.color) ? undefined : `#${route.color}`,
+                color: !(route.textColor) ? undefined : `#${route.textColor}`,
+              }}
+            >
+              {route.abbreviation}
+            </div>
+          ))}
+        </th>
+      )}
+      <td colSpan={(routes.length > 0) ? 1 : 2}>
         {message}
       </td>
     </tr>

@@ -49,16 +49,8 @@ export default function usePublicMessages(infoPoint, routes) {
 
   return useMemo(() => {
     if (!(publicMessages instanceof Array)) return publicMessages;
-    return publicMessages.sort(comparePublicMessages).filter((publicMessage) => {
-      if ((routes instanceof Array) && (publicMessage.routeAbbreviation)) {
-        return routes.includes(publicMessage.routeAbbreviation);
-      } else {
-        return true;
-      }
-    }).map((publicMessage) => {
-      return {...publicMessage, routeAbbreviation: publicMessage.routeAbbreviation || 'ALL'};
-    });
-  }, [routes, publicMessages]);
+    return publicMessages.sort(comparePublicMessages);
+  }, [publicMessages]);
 }
 
 /**
@@ -81,7 +73,8 @@ async function fetchPublicMessages(infoPoint) {
   const getCurrentMessagesJSON = await getCurrentMessagesResponse.json();
   getCurrentMessagesJSON.forEach((publicMessage) => {
     let sortOrder;
-    const routes = publicMessage['Routes'].reduce((routes, routeId) => {
+    const routes = [];
+    publicMessage['Routes'].forEach((routeId) => {
       routes.push({
         id: routeId,
         abbreviation: routesById[routeId]['RouteAbbreviation'] || null,
@@ -96,11 +89,10 @@ async function fetchPublicMessages(infoPoint) {
     publicMessages.push({
       key: publicMessage['MessageId'],
       message: publicMessage['Message'],
-      routes: routes,
+      routes: routes.sort(compareRoutes) || 'ALL',
       sortOrder: sortOrder,
     });
   });
-
   return publicMessages;
 }
 
@@ -121,5 +113,25 @@ function comparePublicMessages(publicMessage1, publicMessage2) {
     return order1 - order2;
   } else {
     return publicMessage1.message.localeCompare(publicMessage2.message);
+  }
+}
+
+/** Compares two routes for sorting purposes.
+ *
+ * @param {Object} route1
+ * @param {Object} route2
+ * @return {Number}
+ * @see {fetchPublicMessages}
+ */
+function compareRoutes(route1, route2) {
+  const [order1, order2] = [route1.sortOrder, route2.sortOrder];
+  if (order1 === null && order2 !== null) {
+    return -1;
+  } else if (order1 !== null && order2 === null) {
+    return 1;
+  } else if (order1 !== null && order2 !== null && order1 !== order2) {
+    return order1 - order2;
+  } else {
+    return route1.abbreviation.localeCompare(route2.abbreviation);
   }
 }

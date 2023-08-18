@@ -21,8 +21,8 @@ export default function App() {
         <PublicMessage message={'Failed to load message information.'}/>
       ) : (publicMessages.length === 0) ? (
         <PublicMessage message={'No relevant messages found.'}/>
-      ) : publicMessages.map(({key, ...message}) => (
-        <PublicMessage key={key} {...message} />
+      ) : publicMessages.map((message) => (
+        <PublicMessage key={message.key} {...message} />
       ))}
     </PublicMessageBoard>
   );

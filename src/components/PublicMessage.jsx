@@ -11,23 +11,24 @@ import classNames from './PublicMessage.module.css';
  * @param {String} message - the text content of the message to be displayed.
  * @return {JSX.Element}
  */
-export default function PublicMessage({routeAbbreviation, routeColor, routeTextColor, message}) {
+export default function PublicMessage({message, routes}) {
   return (
     <tr>
-      {(routeAbbreviation) && (
-        <th scope={'row'}>
+      <th scope={'row'}>
+        {routes.map((route) => (
           <div
+            key={route.id}
             className={classNames['route-abbreviation']}
             style={{
-              backgroundColor: !(routeColor) ? undefined : `#${routeColor}`,
-              color: !(routeTextColor) ? undefined : `#${routeTextColor}`,
+              backgroundColor: !(route.color) ? undefined : `#${route.color}`,
+              color: !(route.textColor) ? undefined : `#${route.textColor}`,
             }}
           >
-            {routeAbbreviation}
+            {route.abbreviation}
           </div>
-        </th>
-      )}
-      <td colSpan={(routeAbbreviation) ? 1 : 2}>
+        ))}
+      </th>
+      <td colSpan={(routes) ? 1 : 2}>
         {message}
       </td>
     </tr>
@@ -35,8 +36,6 @@ export default function PublicMessage({routeAbbreviation, routeColor, routeTextC
 }
 
 PublicMessage.propTypes = {
-  routeAbbreviation: PropTypes.string,
-  routeColor: PropTypes.string,
-  routeTextColor: PropTypes.string,
   message: PropTypes.string.isRequired,
+  routes: PropTypes.array,
 };

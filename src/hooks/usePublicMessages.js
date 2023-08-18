@@ -109,7 +109,7 @@ async function fetchPublicMessages(infoPoint) {
  * @see {usePublicMessages}
  */
 function comparePublicMessages(publicMessage1, publicMessage2) {
-  const [order1, order2] = [publicMessage1.routeSortOrder, publicMessage2.routeSortOrder];
+  const [order1, order2] = [publicMessage1.sortOrder, publicMessage2.sortOrder];
   if (order1 === null && order2 !== null) {
     return -1;
   } else if (order1 !== null && order2 === null) {

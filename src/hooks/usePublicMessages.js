@@ -4,7 +4,7 @@ import {useCallback, useEffect, useMemo, useState} from 'react';
  * @typedef PublicMessageObject
  * @property {Number} key - a unique key for the message, determined by the message ID from InfoPoint
  * @property {String} message - the text for a public message.
- * @property {Object} routes - an array of routes affected by this message.
+ * @property {Array} routes - list of routes affected by this message.
  * @property {String|null} route.abbreviation - a short name for a route if applicable, null if the message is general.
  * @property {String|null} route.color - a color (hex string but without #) override for a route's background if
  *                                      applicable, null if the message is general.

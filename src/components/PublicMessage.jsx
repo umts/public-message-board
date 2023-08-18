@@ -5,10 +5,8 @@ import classNames from './PublicMessage.module.css';
  * Component that displays a message within a {@link PublicMessageBoard}.
  *
  * @constructor
- * @param {String|null} routeAbbreviation - an optional route abbreviation to label this message with.
- * @param {String|null} routeColor - an optional background color override for the route label.
- * @param {String|null} routeTextColor - an optional text color override for the route label.
  * @param {String} message - the text content of the message to be displayed.
+ * @param {Array} routes - list of routes affected.
  * @return {JSX.Element}
  */
 export default function PublicMessage({message, routes}) {

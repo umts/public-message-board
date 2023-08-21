@@ -28,6 +28,13 @@ export default function PublicMessage({message, routes}) {
           ))}
         </th>
       )}
+      {(!routes) && (
+        <th scope={'row'}>
+          <div className={classNames['route-abbreviation']}>
+            ALL
+          </div>
+        </th>
+      )}
       <td colSpan={(routes) ? 1 : 2}>
         {message}
       </td>

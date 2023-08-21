@@ -12,7 +12,7 @@ import classNames from './PublicMessage.module.css';
 export default function PublicMessage({message, routes}) {
   return (
     <tr>
-      {(routes.length > 0) && (
+      {(routes) && (
         <th scope={'row'}>
           {routes.map((route) => (
             <div
@@ -28,7 +28,7 @@ export default function PublicMessage({message, routes}) {
           ))}
         </th>
       )}
-      <td colSpan={(routes.length > 0) ? 1 : 2}>
+      <td colSpan={(routes) ? 1 : 2}>
         {message}
       </td>
     </tr>

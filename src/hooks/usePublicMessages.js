@@ -52,7 +52,7 @@ export default function usePublicMessages(infoPoint, routes) {
     return publicMessages.filter((publicMessage) => {
       if (routes instanceof Array) {
         return (publicMessage.routes.filter((route) => {
-          return routes.includes(route.abbreviation);
+          return routes.includes(route.abbreviation) || route === null;
         }).length > 0);
       } else {
         return true;
@@ -81,23 +81,22 @@ async function fetchPublicMessages(infoPoint) {
   const getCurrentMessagesJSON = await getCurrentMessagesResponse.json();
   getCurrentMessagesJSON.forEach((publicMessage) => {
     let sortOrder;
-    const routes = [];
-    publicMessage['Routes'].forEach((routeId) => {
-      routes.push({
-        id: routeId,
-        abbreviation: routesById[routeId]['RouteAbbreviation'] || 'ALL',
-        color: routesById[routeId]['Color'] || null,
-        textColor: routesById[routeId]['TextColor'] || null,
-        sortOrder: routesById[routeId]['SortOrder'] || null,
-      });
+    const routes = publicMessage['Routes'] && publicMessage['Routes'].map((routeId) => {
       if (routesById[routeId]['SortOrder'] && routesById[routeId]['SortOrder'] < sortOrder) {
         sortOrder = routesById[routeId]['SortOrder'];
       }
-    });
+      return {
+        id: routeId,
+        abbreviation: routesById[routeId]['RouteAbbreviation'] || null,
+        color: routesById[routeId]['Color'] || null,
+        textColor: routesById[routeId]['TextColor'] || null,
+        sortOrder: routesById[routeId]['SortOrder'] || null,
+      };
+    }).sort(compareRoutes);
     publicMessages.push({
       id: publicMessage['MessageId'],
       message: publicMessage['Message'],
-      routes: routes.sort(compareRoutes),
+      routes: routes,
       sortOrder: sortOrder,
     });
   });

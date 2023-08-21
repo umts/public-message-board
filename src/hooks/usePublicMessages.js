@@ -2,7 +2,7 @@ import {useCallback, useEffect, useMemo, useState} from 'react';
 
 /**
  * @typedef PublicMessageObject
- * @property {Number} key - a unique key for the message, determined by the message ID from InfoPoint
+ * @property {Number} id - a unique key for the message, determined by the message ID from InfoPoint
  * @property {String} message - the text for a public message.
  * @property {Array} routes - list of routes affected by this message.
  * @property {String|null} route.abbreviation - a short name for a route if applicable, null if the message is general.
@@ -95,7 +95,7 @@ async function fetchPublicMessages(infoPoint) {
       }
     });
     publicMessages.push({
-      key: publicMessage['MessageId'],
+      id: publicMessage['MessageId'],
       message: publicMessage['Message'],
       routes: routes.sort(compareRoutes),
       sortOrder: sortOrder,

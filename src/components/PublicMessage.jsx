@@ -9,7 +9,7 @@ import classNames from './PublicMessage.module.css';
  * @param {Array} routes - list of routes affected.
  * @return {JSX.Element}
  */
-export default function PublicMessage({id, message, routes}) {
+export default function PublicMessage({message, routes}) {
   return (
     <tr>
       {(routes) && (
@@ -26,13 +26,6 @@ export default function PublicMessage({id, message, routes}) {
               {route.abbreviation}
             </div>
           ))}
-        </th>
-      )}
-      {(id && !routes) && (
-        <th scope={'row'}>
-          <div className={classNames['route-abbreviation']}>
-            ALL
-          </div>
         </th>
       )}
       <td colSpan={(routes) ? 1 : 2}>

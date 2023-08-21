@@ -50,7 +50,7 @@ export default function usePublicMessages(infoPoint, routes) {
   return useMemo(() => {
     if (!(publicMessages instanceof Array)) return publicMessages;
     return publicMessages.sort(comparePublicMessages).filter((publicMessage) => {
-      if (routes instanceof Array && publicMessage.routes) {
+      if (routes instanceof Array) {
         return (publicMessage.routes.filter((route) => {
           return routes.includes(route.abbreviation);
         }).length > 0);

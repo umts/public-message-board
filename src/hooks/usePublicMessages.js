@@ -49,7 +49,7 @@ export default function usePublicMessages(infoPoint, routes) {
 
   return useMemo(() => {
     if (!(publicMessages instanceof Array)) return publicMessages;
-    return publicMessages.sort(comparePublicMessages).filter((publicMessage) => {
+    return publicMessages.filter((publicMessage) => {
       if (routes instanceof Array) {
         return (publicMessage.routes.filter((route) => {
           return routes.includes(route.abbreviation);
@@ -101,7 +101,7 @@ async function fetchPublicMessages(infoPoint) {
       sortOrder: sortOrder,
     });
   });
-  return publicMessages;
+  return publicMessages.sort(comparePublicMessages);
 }
 
 /** Compares two public messages for sorting purposes.

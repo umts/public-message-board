@@ -5,29 +5,30 @@ import classNames from './PublicMessage.module.css';
  * Component that displays a message within a {@link PublicMessageBoard}.
  *
  * @constructor
- * @param {String|null} routeAbbreviation - an optional route abbreviation to label this message with.
- * @param {String|null} routeColor - an optional background color override for the route label.
- * @param {String|null} routeTextColor - an optional text color override for the route label.
  * @param {String} message - the text content of the message to be displayed.
+ * @param {Array} routes - list of routes affected.
  * @return {JSX.Element}
  */
-export default function PublicMessage({routeAbbreviation, routeColor, routeTextColor, message}) {
+export default function PublicMessage({message, routes}) {
   return (
     <tr>
-      {(routeAbbreviation) && (
+      {(routes) && (
         <th scope={'row'}>
-          <div
-            className={classNames['route-abbreviation']}
-            style={{
-              backgroundColor: !(routeColor) ? undefined : `#${routeColor}`,
-              color: !(routeTextColor) ? undefined : `#${routeTextColor}`,
-            }}
-          >
-            {routeAbbreviation}
-          </div>
+          {routes.map((route) => (
+            <div
+              key={route.id}
+              className={classNames['route-abbreviation']}
+              style={{
+                backgroundColor: !(route.color) ? undefined : `#${route.color}`,
+                color: !(route.textColor) ? undefined : `#${route.textColor}`,
+              }}
+            >
+              {route.abbreviation}
+            </div>
+          ))}
         </th>
       )}
-      <td colSpan={(routeAbbreviation) ? 1 : 2}>
+      <td colSpan={(routes) ? 1 : 2}>
         {message}
       </td>
     </tr>
@@ -35,8 +36,7 @@ export default function PublicMessage({routeAbbreviation, routeColor, routeTextC
 }
 
 PublicMessage.propTypes = {
-  routeAbbreviation: PropTypes.string,
-  routeColor: PropTypes.string,
-  routeTextColor: PropTypes.string,
+  id: PropTypes.number,
   message: PropTypes.string.isRequired,
+  routes: PropTypes.array,
 };

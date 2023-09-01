@@ -2,16 +2,19 @@ import {useCallback, useEffect, useMemo, useState} from 'react';
 
 /**
  * @typedef PublicMessageObject
- * @property {Number} id - a unique key for the message, determined by the message ID from InfoPoint
+ * @property {Number} id - a unique id for the message, from InfoPoint
  * @property {String} message - the text for a public message.
- * @property {Array} routes - list of routes affected by this message.
- * @property {String|null} route.abbreviation - a short name for a route if applicable, null if the message is general.
- * @property {String|null} route.color - a color (hex string but without #) override for a route's background if
- *                                      applicable, null if the message is general.
- * @property {String|null} route.textColor - a color (hex string but without #) override for a route's text if
- *                                          applicable, null if the message is general.
- * @property {Number|null} route.sortOrder - a pre-set sort order for the route if applicable.
- * @property {Number|null} sortOrder - a pre-set sort order determined by the routes, if they exist.
+ * @property {[RouteObject]|null} routes - list of routes affected by this message, null if message is general.
+ * @property {Number|null} sortOrder - a pre-set sort order determined by the routes, if applicable.
+ */
+
+/**
+ * @typedef RouteObject
+ * @property {Number} id - a unique id for the route, from InfoPoint
+ * @property {String} abbreviation - a short name for a route.
+ * @property {String|null} color - a color (hex string but without #) override for a route's background, if applicable.
+ * @property {String|null} textColor - a color (hex string but without #) override for a route's text, if applicable.
+ * @property {Number|null} sortOrder - a pre-set sort order for the route, if applicable.
  */
 
 /**
@@ -89,7 +92,7 @@ async function fetchPublicMessages(infoPoint) {
         }
         return {
           id: routeId,
-          abbreviation: routesById[routeId]['RouteAbbreviation'] || null,
+          abbreviation: routesById[routeId]['RouteAbbreviation'],
           color: routesById[routeId]['Color'] || null,
           textColor: routesById[routeId]['TextColor'] || null,
           sortOrder: routesById[routeId]['SortOrder'] || null,
@@ -99,8 +102,8 @@ async function fetchPublicMessages(infoPoint) {
     publicMessages.push({
       id: publicMessage['MessageId'],
       message: publicMessage['Message'],
-      routes: routes,
-      sortOrder: sortOrder,
+      routes: routes || null,
+      sortOrder: sortOrder || null,
     });
   });
   return publicMessages.sort(comparePublicMessages);

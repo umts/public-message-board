@@ -85,7 +85,10 @@ async function fetchPublicMessages(infoPoint) {
     let routes;
     if (publicMessage['Routes'] && publicMessage['Routes'].length > 0) {
       routes = publicMessage['Routes'].map((routeId) => {
-        if (routesById[routeId]['SortOrder'] && routesById[routeId]['SortOrder'] < sortOrder) {
+        if (
+          typeof(routesById[routeId]['SortOrder']) === 'number' &&
+          (typeof(sortOrder) !== 'number' || routesById[routeId]['SortOrder'] < sortOrder)
+        ) {
           sortOrder = routesById[routeId]['SortOrder'];
         }
         return {

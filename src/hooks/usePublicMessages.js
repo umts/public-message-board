@@ -112,7 +112,7 @@ async function fetchPublicMessages(infoPoint) {
  * @param {PublicMessageObject} publicMessage1
  * @param {PublicMessageObject} publicMessage2
  * @return {Number}
- * @see {usePublicMessages}
+ * @see {fetchPublicMessages}
  */
 function comparePublicMessages(publicMessage1, publicMessage2) {
   const [order1, order2] = [publicMessage1.sortOrder, publicMessage2.sortOrder];

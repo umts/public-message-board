@@ -54,9 +54,7 @@ export default function usePublicMessages(infoPoint, routes) {
     if (!(publicMessages instanceof Array)) return publicMessages;
     return publicMessages.filter((publicMessage) => {
       if (routes instanceof Array) {
-        return (publicMessage.routes.filter((route) => {
-          return routes.includes(route.abbreviation) || route === null;
-        }).length > 0);
+        return publicMessage.routes.some((route) => routes.includes(route.abbreviation));
       } else {
         return true;
       }

@@ -12,9 +12,8 @@ through url search parameters.
 
 ```html
 <iframe src="https://pvta-public-messages.admin.umass.edu"
-        style="display: block;
-               width: 100%;
-               border: none;">
+        style="display: block; width: 100%; border: none;"
+        onload="window.addEventListener('message', (e) => { if (new window.URL(e.origin).origin === new window.URL(this.src).origin) { this.height = e.data.height; } });">
 </iframe>
 ```
 
@@ -31,9 +30,8 @@ A fully configured embedding to show messages for the UMass campus shuttle will 
 
 ```html
 <iframe src="https://pvta-public-messages.admin.umass.edu/?infoPoint=https://bustracker.pvta.com/InfoPoint/rest&routes=34,35"
-        style="display: block;
-               width: 100%;
-               border: none;">
+        style="display: block; width: 100%; border: none;"
+        onload="window.addEventListener('message', (e) => { if (new window.URL(e.origin).origin === new window.URL(this.src).origin) { this.height = e.data.height; } });">
 </iframe>
 ```
 

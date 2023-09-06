@@ -5,7 +5,6 @@ import {useCallback, useEffect, useMemo, useState} from 'react';
  * @property {Number} id - a unique id for the message, from InfoPoint
  * @property {String} message - the text for a public message.
  * @property {[RouteObject]|null} routes - list of routes affected by this message, null if message is general.
- * @property {Number|null} sortOrder - a pre-set sort order determined by the routes, if applicable.
  */
 
 /**
@@ -14,7 +13,6 @@ import {useCallback, useEffect, useMemo, useState} from 'react';
  * @property {String} abbreviation - a short name for a route.
  * @property {String|null} color - a color (hex string but without #) override for a route's background, if applicable.
  * @property {String|null} textColor - a color (hex string but without #) override for a route's text, if applicable.
- * @property {Number|null} sortOrder - a pre-set sort order for the route, if applicable.
  */
 
 /**
@@ -51,14 +49,20 @@ export default function usePublicMessages(infoPoint, routes) {
   }, [refreshPublicMessages]);
 
   return useMemo(() => {
-    if (!(publicMessages instanceof Array)) return publicMessages;
-    return publicMessages.filter((publicMessage) => {
-      if (routes instanceof Array) {
-        return publicMessage.routes.some((route) => routes.includes(route.abbreviation));
-      } else {
-        return true;
-      }
-    });
+    if (!(publicMessages instanceof Array)) {
+      return publicMessages;
+    } else {
+      return sortPublicMessages(filterPublicMessages(publicMessages, routes)).map((publicMessage) => ({
+        id: publicMessage['MessageId'],
+        message: publicMessage['Message'],
+        routes: publicMessage['Routes'].map((route) => ({
+          id: route['RouteId'],
+          abbreviation: route['RouteAbbreviation'],
+          color: route['Color'] || null,
+          textColor: route['TextColor'] || null,
+        })),
+      }));
+    }
   }, [routes, publicMessages]);
 }
 
@@ -66,86 +70,48 @@ export default function usePublicMessages(infoPoint, routes) {
  * Fetches public message data from an Avail InfoPoint API.
  *
  * @param {URL} infoPoint
- * @return {Promise<[PublicMessageObject]>}
+ * @return {Promise<[{}]>}
  * @see {usePublicMessages}
  */
 async function fetchPublicMessages(infoPoint) {
-  const routesById = {};
+  const routesByID = {};
   const getAllRoutesResponse = await fetch(new URL('Routes/GetAllRoutes', infoPoint));
   const getAllRoutesJSON = await getAllRoutesResponse.json();
   getAllRoutesJSON.forEach((route) => {
-    routesById[route['RouteId']] = route;
+    routesByID[route['RouteId']] = route;
   });
 
-  const publicMessages = [];
   const getCurrentMessagesResponse = await fetch(new URL('PublicMessages/GetCurrentMessages', infoPoint));
   const getCurrentMessagesJSON = await getCurrentMessagesResponse.json();
-  getCurrentMessagesJSON.forEach((publicMessage) => {
-    let sortOrder;
-    let routes;
-    if (publicMessage['Routes'] && publicMessage['Routes'].length > 0) {
-      routes = publicMessage['Routes'].map((routeId) => {
-        if (
-          typeof(routesById[routeId]['SortOrder']) === 'number' &&
-          (typeof(sortOrder) !== 'number' || routesById[routeId]['SortOrder'] < sortOrder)
-        ) {
-          sortOrder = routesById[routeId]['SortOrder'];
-        }
-        return {
-          id: routeId,
-          abbreviation: routesById[routeId]['RouteAbbreviation'],
-          color: routesById[routeId]['Color'] || null,
-          textColor: routesById[routeId]['TextColor'] || null,
-          sortOrder: routesById[routeId]['SortOrder'] || null,
-        };
-      }).sort(compareRoutes);
+  return getCurrentMessagesJSON.map((publicMessage) => ({
+    ...publicMessage,
+    'Routes': publicMessage['Routes']?.map((routeID) => routesByID[routeID]) || [],
+  }));
+}
+
+/**
+ * TODO: Document.
+ *
+ * @param {[{}]} publicMessages
+ * @param {[String]|null} routeAbbreviations
+ * @return {[{}]}
+ */
+function filterPublicMessages(publicMessages, routeAbbreviations) {
+  return publicMessages.filter((publicMessage) => {
+    if ((routeAbbreviations instanceof Array) && (publicMessage['Routes'].length > 0)) {
+      return publicMessage['Routes'].some((route) => route['RouteAbbreviation'].includes(route.abbreviation));
+    } else {
+      return true;
     }
-    publicMessages.push({
-      id: publicMessage['MessageId'],
-      message: publicMessage['Message'],
-      routes: routes || null,
-      sortOrder: sortOrder || null,
-    });
   });
-  return publicMessages.sort(comparePublicMessages);
 }
 
-/** Compares two public messages for sorting purposes.
+/**
+ * TODO: Document.
  *
- * @param {PublicMessageObject} publicMessage1
- * @param {PublicMessageObject} publicMessage2
- * @return {Number}
- * @see {fetchPublicMessages}
+ * @param {[{}]} publicMessages
+ * @return {[{}]}
  */
-function comparePublicMessages(publicMessage1, publicMessage2) {
-  const [order1, order2] = [publicMessage1.sortOrder, publicMessage2.sortOrder];
-  if (order1 === null && order2 !== null) {
-    return -1;
-  } else if (order1 !== null && order2 === null) {
-    return 1;
-  } else if (order1 !== null && order2 !== null && order1 !== order2) {
-    return order1 - order2;
-  } else {
-    return publicMessage1.message.localeCompare(publicMessage2.message);
-  }
-}
-
-/** Compares two routes for sorting purposes.
- *
- * @param {Object} route1
- * @param {Object} route2
- * @return {Number}
- * @see {fetchPublicMessages}
- */
-function compareRoutes(route1, route2) {
-  const [order1, order2] = [route1.sortOrder, route2.sortOrder];
-  if (order1 === null && order2 !== null) {
-    return -1;
-  } else if (order1 !== null && order2 === null) {
-    return 1;
-  } else if (order1 !== null && order2 !== null && order1 !== order2) {
-    return order1 - order2;
-  } else {
-    return route1.abbreviation.localeCompare(route2.abbreviation);
-  }
+function sortPublicMessages(publicMessages) {
+  return publicMessages;
 }

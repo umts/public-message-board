@@ -9,7 +9,7 @@ import classNames from './PublicMessage.module.css';
  * @param {Array} routes - list of routes affected.
  * @return {JSX.Element}
  */
-export default function PublicMessage({message, routes}) {
+export default function PublicMessage({message, priority, routes}) {
   return (
     <tr>
       {(routes) && (
@@ -28,15 +28,30 @@ export default function PublicMessage({message, routes}) {
           ))}
         </th>
       )}
-      <td colSpan={(routes) ? 1 : 2}>
+      <td
+        style={{
+          'border-right': `3px solid ${PRIORITY_COLORS[priority]}`,
+        }}
+        colSpan={(routes) ? 1 : 2}
+      >
         {message}
       </td>
     </tr>
   );
 }
 
+// Map priority value to the color used on the message's color bar
+const PRIORITY_COLORS = {
+  '0': '#ff0000',
+  '1': '#ff6600',
+  '2': '#ffcc00',
+  '3': '#00ff00',
+  '-1': '#000000',
+};
+
 PublicMessage.propTypes = {
   id: PropTypes.number,
   message: PropTypes.string.isRequired,
+  priority: PropTypes.number,
   routes: PropTypes.array,
 };

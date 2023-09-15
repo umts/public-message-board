@@ -103,6 +103,7 @@ async function fetchPublicMessages(infoPoint) {
     publicMessages.push({
       id: publicMessage['MessageId'],
       message: publicMessage['Message'],
+      priority: publicMessage['Priority'],
       routes: routes || null,
       sortOrder: sortOrder || null,
     });

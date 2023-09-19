@@ -10,3 +10,23 @@
 .route-abbreviation:last-of-type {
   margin-bottom: 0;
 }
+
+.priority {
+  border-right: thick solid #fc0;
+}
+
+.priority-0 {
+  border-right-color: #f00;
+}
+
+.priority-1 {
+  border-right-color: #f60;
+}
+
+.priority-2 {
+  border-right-color: #fc0;
+}
+
+.priority-3 {
+  border-right-color: #0f0;
+}

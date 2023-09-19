@@ -3,7 +3,7 @@ import {useCallback, useEffect, useMemo, useState} from 'react';
 /**
  * @typedef PublicMessageObject
  * @property {Number} id - a unique id for the message, from InfoPoint
- * @property {String} message - the text for a public message.
+ * @property {String} message - the text for a public message (HTML Supported).
  * @property {Number} priority - the priority of the message specified by Avail.
  * @property {[RouteObject]|null} routes - list of routes affected by this message, null if message is general.
  * @property {Number|null} sortOrder - a pre-set sort order determined by the routes, if applicable.

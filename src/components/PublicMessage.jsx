@@ -1,3 +1,4 @@
+import DOMPurify from 'dompurify';
 import PropTypes from 'prop-types';
 import classNames from './PublicMessage.module.css';
 
@@ -5,7 +6,7 @@ import classNames from './PublicMessage.module.css';
  * Component that displays a message within a {@link PublicMessageBoard}.
  *
  * @constructor
- * @param {String} message - the text content of the message to be displayed.
+ * @param {String} message - the text content of the message to be displayed (HTML Supported).
  * @param {Number} priority - the "priority" level specified by Avail.
  * @param {Array} routes - list of routes affected.
  * @return {JSX.Element}
@@ -32,9 +33,8 @@ export default function PublicMessage({message, priority, routes}) {
       <td
         className={`${classNames['priority']} ${classNames[`priority-${priority}`]}`}
         colSpan={(routes) ? 1 : 2}
-      >
-        {message}
-      </td>
+        dangerouslySetInnerHTML={{__html: DOMPurify.sanitize(message)}}
+      />
     </tr>
   );
 }

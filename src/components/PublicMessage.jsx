@@ -6,6 +6,7 @@ import classNames from './PublicMessage.module.css';
  *
  * @constructor
  * @param {String} message - the text content of the message to be displayed.
+ * @param {Number} priority - the "priority" level specified by Avail.
  * @param {Array} routes - list of routes affected.
  * @return {JSX.Element}
  */

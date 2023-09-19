@@ -29,7 +29,7 @@ export default function PublicMessage({message, priority, routes}) {
         </th>
       )}
       <td
-        className={`${classNames['priority']} ${classNames['priority-' + priority]}`}
+        className={`${classNames['priority']} ${classNames[`priority-${priority}`]}`}
         colSpan={(routes) ? 1 : 2}
       >
         {message}

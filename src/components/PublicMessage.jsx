@@ -6,10 +6,11 @@ import classNames from './PublicMessage.module.css';
  *
  * @constructor
  * @param {String} message - the text content of the message to be displayed.
+ * @param {Number} priority - the "priority" level specified by Avail.
  * @param {Array} routes - list of routes affected.
  * @return {JSX.Element}
  */
-export default function PublicMessage({message, routes}) {
+export default function PublicMessage({message, priority, routes}) {
   return (
     <tr>
       {(routes) && (
@@ -28,7 +29,10 @@ export default function PublicMessage({message, routes}) {
           ))}
         </th>
       )}
-      <td colSpan={(routes) ? 1 : 2}>
+      <td
+        className={`${classNames['priority']} ${classNames[`priority-${priority}`]}`}
+        colSpan={(routes) ? 1 : 2}
+      >
         {message}
       </td>
     </tr>
@@ -38,5 +42,6 @@ export default function PublicMessage({message, routes}) {
 PublicMessage.propTypes = {
   id: PropTypes.number,
   message: PropTypes.string.isRequired,
+  priority: PropTypes.number,
   routes: PropTypes.array,
 };

@@ -3,7 +3,8 @@ import {useCallback, useEffect, useMemo, useState} from 'react';
 /**
  * @typedef PublicMessageObject
  * @property {Number} id - a unique id for the message, from InfoPoint
- * @property {String} message - the text for a public message.
+ * @property {String} message - the text for a public message (HTML Supported).
+ * @property {Number} priority - the priority of the message specified by Avail.
  * @property {[RouteObject]|null} routes - list of routes affected by this message, null if message is general.
  */
 
@@ -55,6 +56,7 @@ export default function usePublicMessages(infoPoint, routes) {
       return sortPublicMessages(filterPublicMessages(publicMessages, routes)).map((publicMessage) => ({
         id: publicMessage['MessageId'],
         message: publicMessage['Message'],
+        priority: publicMessage['Priority'],
         routes: publicMessage['Routes'].map((route) => ({
           id: route['RouteId'],
           abbreviation: route['RouteAbbreviation'],

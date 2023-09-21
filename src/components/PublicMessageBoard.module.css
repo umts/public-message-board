@@ -6,6 +6,7 @@
   border-radius: 0.375rem;
   border-spacing: 0;
   width: 100%;
+  overflow: hidden;
 }
 
 .public-message-board th {

@@ -115,5 +115,23 @@ function filterPublicMessages(publicMessages, routeAbbreviations) {
  * @return {[{}]}
  */
 function sortPublicMessages(publicMessages) {
-  return publicMessages;
+  const ensureComparable = (value) => (typeof(value) === 'number') ? value : Infinity;
+  const minimumComparable = (values) => (values.length > 0) ? Math.min(values) : Infinity;
+
+  return publicMessages.map((publicMessage) => ({
+    ...publicMessage,
+    'Routes': publicMessage['Routes'].sort((route1, route2) => {
+      const sortOrder1 = ensureComparable(route1['SortOrder']);
+      const sortOrder2 = ensureComparable(route2['SortOrder']);
+      return sortOrder1 - sortOrder2;
+    }),
+  })).sort((message1, message2) => {
+    const priority1 = ensureComparable(message1['Priority']);
+    const priority2 = ensureComparable(message2['Priority']);
+    if (priority1 !== priority2) return priority1 - priority2;
+
+    const routeSortOrder1 = minimumComparable(message1['Routes'].map((route) => ensureComparable(route['SortOrder'])));
+    const routeSortOrder2 = minimumComparable(message2['Routes'].map((route) => ensureComparable(route['SortOrder'])));
+    return routeSortOrder1 - routeSortOrder2;
+  });
 }

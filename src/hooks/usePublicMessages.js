@@ -23,10 +23,8 @@ import {useCallback, useEffect, useMemo, useState} from 'react';
  * - Will return `undefined` if data has not yet been fetched yet.
  * - Will return `null` if an error occurs during fetching.
  * - Will re-fetch and re-process data periodically.
- * - Will sort public messages with general (route-less) messages first, then by the API given route sort order,
- *   then lexically by message.
- * - Will apply filtering by route abbreviation if provided, always letting general message through.
- * - Will give general messages a fake route abbreviation.
+ * - Will apply filtering by route abbreviation if provided, always letting general messages through.
+ * - Will sort public messages by priority, then the lowest sort order of its affected routes (general messages last).
  *
  * @param {URL} infoPoint - the URL of the InfoPoint API from which to get public message data.
  * @param {[String]|null} routes - a list of route abbreviations to whitelist, null if no filtering is to be applied.
@@ -59,7 +57,7 @@ export default function usePublicMessages(infoPoint, routes) {
 }
 
 /**
- * Fetches public message data from an Avail InfoPoint API.
+ * Fetches public message data from an Avail InfoPoint API. See InfoPoint Swagger UI for types.
  *
  * @param {URL} infoPoint
  * @return {Promise<[{}]>}
@@ -82,11 +80,13 @@ async function fetchPublicMessages(infoPoint) {
 }
 
 /**
- * TODO: Document.
+ * Filters public messages based on a list of given route abbreviations. If the message does not apply to at least
+ * one of the given abbreviations, it will be filtered out.
  *
- * @param {[{}]} publicMessages
+ * @param {[{}]} publicMessages - raw public message data.
  * @param {[String]|null} routeAbbreviations
  * @return {[{}]}
+ * @see {usePublicMessages}
  */
 function filterPublicMessages(publicMessages, routeAbbreviations) {
   return publicMessages.filter((message) => {
@@ -99,10 +99,11 @@ function filterPublicMessages(publicMessages, routeAbbreviations) {
 }
 
 /**
- * TODO: Document.
+ * Sorts public messages by priority, then the lowest sort order of its affected routes (general messages last).
  *
- * @param {[{}]} publicMessages
+ * @param {[{}]} publicMessages - raw public message data.
  * @return {[{}]}
+ * @see {usePublicMessages}
  */
 function sortPublicMessages(publicMessages) {
   const ensureComparable = (value) => (typeof(value) === 'number') ? value : Infinity;
@@ -127,10 +128,11 @@ function sortPublicMessages(publicMessages) {
 }
 
 /**
- * TODO: Document.
+ * Normalizes the format of raw public message data to an application/javascript friendly format.
  *
- * @param {[{}]} publicMessages
+ * @param {[{}]} publicMessages - raw public message data.
  * @return {[{PublicMessageObject}]}
+ * @see {usePublicMessages}
  */
 function normalizePublicMessages(publicMessages) {
   return publicMessages.map((message) => ({

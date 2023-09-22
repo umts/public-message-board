@@ -24,7 +24,7 @@ export default function App() {
       ) : (publicMessages.length === 0) ? (
         <PublicMessage message={'There are no detours currently in effect.'}/>
       ) : publicMessages.map(({id, routes, ...message}) => (
-        <PublicMessage key={id} routes={routes || [{abbreviation: 'ALL', id: id + 0.1}]} {...message} />
+        <PublicMessage key={id} routes={(routes.length > 0) ? routes : [{id, abbreviation: 'ALL'}]} {...message} />
       ))}
     </PublicMessageBoard>
   );

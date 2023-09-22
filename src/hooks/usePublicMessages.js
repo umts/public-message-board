@@ -5,7 +5,7 @@ import {useCallback, useEffect, useMemo, useState} from 'react';
  * @property {Number} id - a unique id for the message, from InfoPoint
  * @property {String} message - the text for a public message (HTML Supported).
  * @property {Number} priority - the priority of the message specified by Avail.
- * @property {[RouteObject]|null} routes - list of routes affected by this message, null if message is general.
+ * @property {[RouteObject]} routes - list of routes affected by this message, empty if message is general.
  */
 
 /**
@@ -53,17 +53,7 @@ export default function usePublicMessages(infoPoint, routes) {
     if (!(publicMessages instanceof Array)) {
       return publicMessages;
     } else {
-      return sortPublicMessages(filterPublicMessages(publicMessages, routes)).map((publicMessage) => ({
-        id: publicMessage['MessageId'],
-        message: publicMessage['Message'],
-        priority: publicMessage['Priority'],
-        routes: publicMessage['Routes'].map((route) => ({
-          id: route['RouteId'],
-          abbreviation: route['RouteAbbreviation'],
-          color: route['Color'] || null,
-          textColor: route['TextColor'] || null,
-        })),
-      }));
+      return normalizePublicMessages(sortPublicMessages(filterPublicMessages(publicMessages, routes)));
     }
   }, [routes, publicMessages]);
 }
@@ -99,9 +89,9 @@ async function fetchPublicMessages(infoPoint) {
  * @return {[{}]}
  */
 function filterPublicMessages(publicMessages, routeAbbreviations) {
-  return publicMessages.filter((publicMessage) => {
-    if ((routeAbbreviations instanceof Array) && (publicMessage['Routes'].length > 0)) {
-      return publicMessage['Routes'].some((route) => route['RouteAbbreviation'].includes(route.abbreviation));
+  return publicMessages.filter((message) => {
+    if ((routeAbbreviations instanceof Array) && (message['Routes'].length > 0)) {
+      return message['Routes'].some((route) => route['RouteAbbreviation'].includes(route.abbreviation));
     } else {
       return true;
     }
@@ -118,9 +108,9 @@ function sortPublicMessages(publicMessages) {
   const ensureComparable = (value) => (typeof(value) === 'number') ? value : Infinity;
   const minimumComparable = (values) => (values.length > 0) ? Math.min(values) : Infinity;
 
-  return publicMessages.map((publicMessage) => ({
-    ...publicMessage,
-    'Routes': publicMessage['Routes'].sort((route1, route2) => {
+  return publicMessages.map((message) => ({
+    ...message,
+    'Routes': message['Routes'].sort((route1, route2) => {
       const sortOrder1 = ensureComparable(route1['SortOrder']);
       const sortOrder2 = ensureComparable(route2['SortOrder']);
       return sortOrder1 - sortOrder2;
@@ -134,4 +124,24 @@ function sortPublicMessages(publicMessages) {
     const routeSortOrder2 = minimumComparable(message2['Routes'].map((route) => ensureComparable(route['SortOrder'])));
     return routeSortOrder1 - routeSortOrder2;
   });
+}
+
+/**
+ * TODO: Document.
+ *
+ * @param {[{}]} publicMessages
+ * @return {[{PublicMessageObject}]}
+ */
+function normalizePublicMessages(publicMessages) {
+  return publicMessages.map((message) => ({
+    id: message['MessageId'],
+    message: message['Message'],
+    priority: message['Priority'],
+    routes: message['Routes'].map((route) => ({
+      id: route['RouteId'],
+      abbreviation: route['RouteAbbreviation'],
+      color: route['Color'] || null,
+      textColor: route['TextColor'] || null,
+    })),
+  }));
 }

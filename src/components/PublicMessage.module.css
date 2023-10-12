@@ -12,7 +12,7 @@
 }
 
 .priority {
-  border-right: thick solid #fc0;
+  border-right: thick solid transparent;
 }
 
 .priority-0 {

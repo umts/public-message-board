@@ -7,7 +7,7 @@ import classNames from './PublicMessage.module.css';
  *
  * @constructor
  * @param {String} message - the text content of the message to be displayed (HTML Supported).
- * @param {Number} priority - the "priority" level specified by Avail.
+ * @param {Number|undefined} priority - the "priority" level specified by Avail.
  * @param {Array|undefined} routes - list of routes affected. Left undefined if message is an error
  * @return {JSX.Element}
  */
@@ -31,7 +31,11 @@ export default function PublicMessage({message, priority, routes}) {
         </th>
       )}
       <td
-        className={`${classNames['priority']} ${classNames[`priority-${priority}`]}`}
+        className={
+          (typeof(priority) === 'number') ?
+            `${classNames['priority']} ${classNames[`priority-${priority}`]}` :
+            undefined
+        }
         colSpan={(routes) ? 1 : 2}
         dangerouslySetInnerHTML={{__html: DOMPurify.sanitize(message)}}
       />

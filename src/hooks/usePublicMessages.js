@@ -5,8 +5,7 @@ import {useCallback, useEffect, useMemo, useState} from 'react';
  * @property {Number} id - a unique id for the message, from InfoPoint
  * @property {String} message - the text for a public message (HTML Supported).
  * @property {Number} priority - the priority of the message specified by Avail.
- * @property {[RouteObject]|null} routes - list of routes affected by this message, null if message is general.
- * @property {Number|null} sortOrder - a pre-set sort order determined by the routes, if applicable.
+ * @property {[RouteObject]} routes - list of routes affected by this message, empty if message is general.
  */
 
 /**
@@ -15,7 +14,6 @@ import {useCallback, useEffect, useMemo, useState} from 'react';
  * @property {String} abbreviation - a short name for a route.
  * @property {String|null} color - a color (hex string but without #) override for a route's background, if applicable.
  * @property {String|null} textColor - a color (hex string but without #) override for a route's text, if applicable.
- * @property {Number|null} sortOrder - a pre-set sort order for the route, if applicable.
  */
 
 /**
@@ -25,10 +23,8 @@ import {useCallback, useEffect, useMemo, useState} from 'react';
  * - Will return `undefined` if data has not yet been fetched yet.
  * - Will return `null` if an error occurs during fetching.
  * - Will re-fetch and re-process data periodically.
- * - Will sort public messages with general (route-less) messages first, then by the API given route sort order,
- *   then lexically by message.
- * - Will apply filtering by route abbreviation if provided, always letting general message through.
- * - Will give general messages a fake route abbreviation.
+ * - Will apply filtering by route abbreviation if provided, always letting general messages through.
+ * - Will sort public messages by priority, then the lowest sort order of its affected routes (general messages last).
  *
  * @param {URL} infoPoint - the URL of the InfoPoint API from which to get public message data.
  * @param {[String]|null} routes - a list of route abbreviations to whitelist, null if no filtering is to be applied.
@@ -52,102 +48,102 @@ export default function usePublicMessages(infoPoint, routes) {
   }, [refreshPublicMessages]);
 
   return useMemo(() => {
-    if (!(publicMessages instanceof Array)) return publicMessages;
-    return publicMessages.filter((publicMessage) => {
-      if ((routes instanceof Array) && (publicMessage.routes instanceof Array)) {
-        return publicMessage.routes.some((route) => routes.includes(route.abbreviation));
-      } else {
-        return true;
-      }
-    });
+    if (!(publicMessages instanceof Array)) {
+      return publicMessages;
+    } else {
+      return normalizePublicMessages(sortPublicMessages(filterPublicMessages(publicMessages, routes)));
+    }
   }, [routes, publicMessages]);
 }
 
 /**
- * Fetches public message data from an Avail InfoPoint API.
+ * Fetches public message data from an Avail InfoPoint API. See InfoPoint Swagger UI for types.
  *
  * @param {URL} infoPoint
- * @return {Promise<[PublicMessageObject]>}
+ * @return {Promise<[{}]>}
  * @see {usePublicMessages}
  */
 async function fetchPublicMessages(infoPoint) {
-  const routesById = {};
+  const routesByID = {};
   const getAllRoutesResponse = await fetch(new URL('Routes/GetAllRoutes', infoPoint));
   const getAllRoutesJSON = await getAllRoutesResponse.json();
   getAllRoutesJSON.forEach((route) => {
-    routesById[route['RouteId']] = route;
+    routesByID[route['RouteId']] = route;
   });
 
-  const publicMessages = [];
   const getCurrentMessagesResponse = await fetch(new URL('PublicMessages/GetCurrentMessages', infoPoint));
   const getCurrentMessagesJSON = await getCurrentMessagesResponse.json();
-  getCurrentMessagesJSON.forEach((publicMessage) => {
-    let sortOrder;
-    let routes;
-    if (publicMessage['Routes'] && publicMessage['Routes'].length > 0) {
-      routes = publicMessage['Routes'].map((routeId) => {
-        if (
-          typeof(routesById[routeId]['SortOrder']) === 'number' &&
-          (typeof(sortOrder) !== 'number' || routesById[routeId]['SortOrder'] < sortOrder)
-        ) {
-          sortOrder = routesById[routeId]['SortOrder'];
-        }
-        return {
-          id: routeId,
-          abbreviation: routesById[routeId]['RouteAbbreviation'],
-          color: routesById[routeId]['Color'] || null,
-          textColor: routesById[routeId]['TextColor'] || null,
-          sortOrder: routesById[routeId]['SortOrder'] || null,
-        };
-      }).sort(compareRoutes);
+  return getCurrentMessagesJSON.map((publicMessage) => ({
+    ...publicMessage,
+    'Routes': publicMessage['Routes']?.map((routeID) => routesByID[routeID]) || [],
+  }));
+}
+
+/**
+ * Filters public messages based on a list of given route abbreviations. If the message does not apply to at least
+ * one of the given abbreviations, it will be filtered out.
+ *
+ * @param {[{}]} publicMessages - raw public message data.
+ * @param {[String]|null} routeAbbreviations
+ * @return {[{}]}
+ * @see {usePublicMessages}
+ */
+function filterPublicMessages(publicMessages, routeAbbreviations) {
+  return publicMessages.filter((message) => {
+    if ((routeAbbreviations instanceof Array) && (message['Routes'].length > 0)) {
+      return message['Routes'].some((route) => route['RouteAbbreviation'].includes(route.abbreviation));
+    } else {
+      return true;
     }
-    publicMessages.push({
-      id: publicMessage['MessageId'],
-      message: publicMessage['Message'],
-      priority: publicMessage['Priority'],
-      routes: routes || null,
-      sortOrder: sortOrder || null,
-    });
   });
-  return publicMessages.sort(comparePublicMessages);
 }
 
-/** Compares two public messages for sorting purposes.
+/**
+ * Sorts public messages by priority, then the lowest sort order of its affected routes (general messages last).
  *
- * @param {PublicMessageObject} publicMessage1
- * @param {PublicMessageObject} publicMessage2
- * @return {Number}
- * @see {fetchPublicMessages}
+ * @param {[{}]} publicMessages - raw public message data.
+ * @return {[{}]}
+ * @see {usePublicMessages}
  */
-function comparePublicMessages(publicMessage1, publicMessage2) {
-  const [order1, order2] = [publicMessage1.sortOrder, publicMessage2.sortOrder];
-  if (order1 === null && order2 !== null) {
-    return -1;
-  } else if (order1 !== null && order2 === null) {
-    return 1;
-  } else if (order1 !== null && order2 !== null && order1 !== order2) {
-    return order1 - order2;
-  } else {
-    return publicMessage1.message.localeCompare(publicMessage2.message);
-  }
+function sortPublicMessages(publicMessages) {
+  const ensureComparable = (value) => (typeof(value) === 'number') ? value : Infinity;
+  const minimumComparable = (values) => (values.length > 0) ? Math.min(values) : Infinity;
+
+  return publicMessages.map((message) => ({
+    ...message,
+    'Routes': message['Routes'].sort((route1, route2) => {
+      const sortOrder1 = ensureComparable(route1['SortOrder']);
+      const sortOrder2 = ensureComparable(route2['SortOrder']);
+      return sortOrder1 - sortOrder2;
+    }),
+  })).sort((message1, message2) => {
+    const priority1 = ensureComparable(message1['Priority']);
+    const priority2 = ensureComparable(message2['Priority']);
+    if (priority1 !== priority2) return priority1 - priority2;
+
+    const routeSortOrder1 = minimumComparable(message1['Routes'].map((route) => ensureComparable(route['SortOrder'])));
+    const routeSortOrder2 = minimumComparable(message2['Routes'].map((route) => ensureComparable(route['SortOrder'])));
+    return routeSortOrder1 - routeSortOrder2;
+  });
 }
 
-/** Compares two routes for sorting purposes.
+/**
+ * Normalizes the format of raw public message data to an application/javascript friendly format.
  *
- * @param {Object} route1
- * @param {Object} route2
- * @return {Number}
- * @see {fetchPublicMessages}
+ * @param {[{}]} publicMessages - raw public message data.
+ * @return {[{PublicMessageObject}]}
+ * @see {usePublicMessages}
  */
-function compareRoutes(route1, route2) {
-  const [order1, order2] = [route1.sortOrder, route2.sortOrder];
-  if (order1 === null && order2 !== null) {
-    return -1;
-  } else if (order1 !== null && order2 === null) {
-    return 1;
-  } else if (order1 !== null && order2 !== null && order1 !== order2) {
-    return order1 - order2;
-  } else {
-    return route1.abbreviation.localeCompare(route2.abbreviation);
-  }
+function normalizePublicMessages(publicMessages) {
+  return publicMessages.map((message) => ({
+    id: message['MessageId'],
+    message: message['Message'],
+    priority: message['Priority'],
+    routes: message['Routes'].map((route) => ({
+      id: route['RouteId'],
+      abbreviation: route['RouteAbbreviation'],
+      color: route['Color'] || null,
+      textColor: route['TextColor'] || null,
+    })),
+  }));
 }

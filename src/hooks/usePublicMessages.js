@@ -95,7 +95,10 @@ function filterPublicMessages(publicMessages, routeAbbreviations) {
     } else {
       return true;
     }
-  });
+  }).map((message) => ({
+    ...message,
+    'Routes': message['Routes'].filter((route) => routeAbbreviations.includes(route['RouteAbbreviation'])),
+  }));
 }
 
 /**

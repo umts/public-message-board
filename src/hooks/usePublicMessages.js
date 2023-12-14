@@ -82,7 +82,7 @@ async function fetchPublicMessages(infoPoint) {
 /**
  * Filters public messages based on a list of given route abbreviations. If the message does not apply to at least
  * one of the given abbreviations, it will be filtered out. If the message applies to at least one of the given
- * abbreviations but contains abbreviations that do not apply, the offending routes will be filtered out.
+ * abbreviations but contains routes that do not apply, the offending routes will be filtered out.
  *
  * @param {[{}]} publicMessages - raw public message data.
  * @param {[String]|null} routeAbbreviations

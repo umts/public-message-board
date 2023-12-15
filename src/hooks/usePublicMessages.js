@@ -81,7 +81,8 @@ async function fetchPublicMessages(infoPoint) {
 
 /**
  * Filters public messages based on a list of given route abbreviations. If the message does not apply to at least
- * one of the given abbreviations, it will be filtered out.
+ * one of the given abbreviations, it will be filtered out. If the message applies to at least one of the given
+ * abbreviations but contains routes that do not apply, the offending routes will be filtered out.
  *
  * @param {[{}]} publicMessages - raw public message data.
  * @param {[String]|null} routeAbbreviations
@@ -89,13 +90,17 @@ async function fetchPublicMessages(infoPoint) {
  * @see {usePublicMessages}
  */
 function filterPublicMessages(publicMessages, routeAbbreviations) {
+  if (!(routeAbbreviations instanceof Array)) return publicMessages;
   return publicMessages.filter((message) => {
-    if ((routeAbbreviations instanceof Array) && (message['Routes'].length > 0)) {
+    if (message['Routes'].length > 0) {
       return message['Routes'].some((route) => routeAbbreviations.includes(route['RouteAbbreviation']));
     } else {
       return true;
     }
-  });
+  }).map((message) => ({
+    ...message,
+    'Routes': message['Routes'].filter((route) => routeAbbreviations.includes(route['RouteAbbreviation'])),
+  }));
 }
 
 /**

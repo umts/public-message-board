@@ -90,8 +90,9 @@ async function fetchPublicMessages(infoPoint) {
  * @see {usePublicMessages}
  */
 function filterPublicMessages(publicMessages, routeAbbreviations) {
+  if (!(routeAbbreviations instanceof Array)) return publicMessages;
   return publicMessages.filter((message) => {
-    if ((routeAbbreviations instanceof Array) && (message['Routes'].length > 0)) {
+    if (message['Routes'].length > 0) {
       return message['Routes'].some((route) => routeAbbreviations.includes(route['RouteAbbreviation']));
     } else {
       return true;

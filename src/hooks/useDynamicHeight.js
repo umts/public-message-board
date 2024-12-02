@@ -1,4 +1,4 @@
-import {useEffect} from 'react';
+import { useEffect } from 'react'
 
 /**
  * Communicates the height of the application to a parent window when embedded in an iframe, allowing for dynamic sizing
@@ -12,14 +12,14 @@ import {useEffect} from 'react';
  *
  * @return {undefined}
  */
-export default function useDynamicHeight() {
+export default function useDynamicHeight () {
   return useEffect(() => {
     const resizeObserver = new ResizeObserver((entries) => {
       entries.forEach((entry) => {
-        top.postMessage({height: entry.contentRect.height}, '*');
-      });
-    });
-    resizeObserver.observe(document.body);
-    return () => resizeObserver.disconnect();
-  }, []);
+        top.postMessage({ height: entry.contentRect.height }, '*')
+      })
+    })
+    resizeObserver.observe(document.body)
+    return () => resizeObserver.disconnect()
+  }, [])
 }

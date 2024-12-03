@@ -1,4 +1,4 @@
-import {useMemo} from 'react';
+import { useMemo } from 'react'
 
 /**
  * @typedef ConfigObject
@@ -31,14 +31,14 @@ import {useMemo} from 'react';
  *
  * @return {ConfigObject}
  */
-export default function useConfig() {
+export default function useConfig () {
   return useMemo(() => {
-    const searchParams = new URLSearchParams(location.search);
+    const searchParams = new URLSearchParams(location.search)
     return {
       infoPoint: parseInfoPoint(searchParams.get('infoPoint')),
       routes: parseRoutes(searchParams.get('routes')),
-    };
-  }, []);
+    }
+  }, [])
 }
 
 /**
@@ -48,14 +48,14 @@ export default function useConfig() {
  * @return {URL|null} - the parsed URL.
  * @see {useConfig}
  */
-function parseInfoPoint(arg) {
-  arg ??= 'https://bustracker.pvta.com/InfoPoint/rest/';
+function parseInfoPoint (arg) {
+  arg ??= 'https://bustracker.pvta.com/InfoPoint/rest/'
   try {
-    const url = new URL(arg);
-    if (!(url.pathname.endsWith('/'))) url.pathname = `${url.pathname}/`;
-    return url;
+    const url = new URL(arg)
+    if (!(url.pathname.endsWith('/'))) url.pathname = `${url.pathname}/`
+    return url
   } catch {
-    return null;
+    return null
   }
 }
 
@@ -66,6 +66,6 @@ function parseInfoPoint(arg) {
  * @return {[String]|null} - the parsed list of routes.
  * @see {useConfig}
  */
-function parseRoutes(arg) {
-  return arg?.split(',')?.filter((route) => !!(route)) || null;
+function parseRoutes (arg) {
+  return arg?.split(',')?.filter((route) => !!(route)) || null
 }

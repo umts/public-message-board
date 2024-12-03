@@ -1,4 +1,4 @@
-import {useCallback, useEffect, useMemo, useState} from 'react';
+import { useCallback, useEffect, useMemo, useState } from 'react'
 
 /**
  * @typedef PublicMessageObject
@@ -30,30 +30,30 @@ import {useCallback, useEffect, useMemo, useState} from 'react';
  * @param {[String]|null} routes - a list of route abbreviations to whitelist, null if no filtering is to be applied.
  * @return {[PublicMessageObject]|null|undefined}
  */
-export default function usePublicMessages(infoPoint, routes) {
-  const [publicMessages, setPublicMessages] = useState(undefined);
+export default function usePublicMessages (infoPoint, routes) {
+  const [publicMessages, setPublicMessages] = useState(undefined)
 
   const refreshPublicMessages = useCallback(() => {
     fetchPublicMessages(infoPoint).then((publicMessages) => {
-      setPublicMessages(publicMessages);
+      setPublicMessages(publicMessages)
     }).catch(() => {
-      setPublicMessages(null);
-    });
-  }, [infoPoint, setPublicMessages]);
+      setPublicMessages(null)
+    })
+  }, [infoPoint, setPublicMessages])
 
   useEffect(() => {
-    refreshPublicMessages();
-    const interval = setInterval(refreshPublicMessages, 30 * 1000);
-    return () => clearInterval(interval);
-  }, [refreshPublicMessages]);
+    refreshPublicMessages()
+    const interval = setInterval(refreshPublicMessages, 30 * 1000)
+    return () => clearInterval(interval)
+  }, [refreshPublicMessages])
 
   return useMemo(() => {
     if (!(publicMessages instanceof Array)) {
-      return publicMessages;
+      return publicMessages
     } else {
-      return normalizePublicMessages(sortPublicMessages(filterPublicMessages(publicMessages, routes)));
+      return normalizePublicMessages(sortPublicMessages(filterPublicMessages(publicMessages, routes)))
     }
-  }, [routes, publicMessages]);
+  }, [routes, publicMessages])
 }
 
 /**
@@ -63,20 +63,20 @@ export default function usePublicMessages(infoPoint, routes) {
  * @return {Promise<[{}]>}
  * @see {usePublicMessages}
  */
-async function fetchPublicMessages(infoPoint) {
-  const routesByID = {};
-  const getAllRoutesResponse = await fetch(new URL('Routes/GetAllRoutes', infoPoint));
-  const getAllRoutesJSON = await getAllRoutesResponse.json();
+async function fetchPublicMessages (infoPoint) {
+  const routesByID = {}
+  const getAllRoutesResponse = await fetch(new URL('Routes/GetAllRoutes', infoPoint))
+  const getAllRoutesJSON = await getAllRoutesResponse.json()
   getAllRoutesJSON.forEach((route) => {
-    routesByID[route['RouteId']] = route;
-  });
+    routesByID[route['RouteId']] = route
+  })
 
-  const getCurrentMessagesResponse = await fetch(new URL('PublicMessages/GetCurrentMessages', infoPoint));
-  const getCurrentMessagesJSON = await getCurrentMessagesResponse.json();
+  const getCurrentMessagesResponse = await fetch(new URL('PublicMessages/GetCurrentMessages', infoPoint))
+  const getCurrentMessagesJSON = await getCurrentMessagesResponse.json()
   return getCurrentMessagesJSON.map((publicMessage) => ({
     ...publicMessage,
-    'Routes': publicMessage['Routes']?.map((routeID) => routesByID[routeID]) || [],
-  }));
+    Routes: publicMessage['Routes']?.map((routeID) => routesByID[routeID]) || [],
+  }))
 }
 
 /**
@@ -89,18 +89,18 @@ async function fetchPublicMessages(infoPoint) {
  * @return {[{}]}
  * @see {usePublicMessages}
  */
-function filterPublicMessages(publicMessages, routeAbbreviations) {
-  if (!(routeAbbreviations instanceof Array)) return publicMessages;
+function filterPublicMessages (publicMessages, routeAbbreviations) {
+  if (!(routeAbbreviations instanceof Array)) return publicMessages
   return publicMessages.filter((message) => {
     if (message['Routes'].length > 0) {
-      return message['Routes'].some((route) => routeAbbreviations.includes(route['RouteAbbreviation']));
+      return message['Routes'].some((route) => routeAbbreviations.includes(route['RouteAbbreviation']))
     } else {
-      return true;
+      return true
     }
   }).map((message) => ({
     ...message,
-    'Routes': message['Routes'].filter((route) => routeAbbreviations.includes(route['RouteAbbreviation'])),
-  }));
+    Routes: message['Routes'].filter((route) => routeAbbreviations.includes(route['RouteAbbreviation'])),
+  }))
 }
 
 /**
@@ -110,26 +110,26 @@ function filterPublicMessages(publicMessages, routeAbbreviations) {
  * @return {[{}]}
  * @see {usePublicMessages}
  */
-function sortPublicMessages(publicMessages) {
-  const ensureComparable = (value) => (typeof(value) === 'number') ? value : Infinity;
-  const minimumComparable = (values) => (values.length > 0) ? Math.min(values) : Infinity;
+function sortPublicMessages (publicMessages) {
+  const ensureComparable = (value) => (typeof (value) === 'number') ? value : Infinity
+  const minimumComparable = (values) => (values.length > 0) ? Math.min(values) : Infinity
 
   return publicMessages.map((message) => ({
     ...message,
-    'Routes': message['Routes'].sort((route1, route2) => {
-      const sortOrder1 = ensureComparable(route1['SortOrder']);
-      const sortOrder2 = ensureComparable(route2['SortOrder']);
-      return sortOrder1 - sortOrder2;
+    Routes: message['Routes'].sort((route1, route2) => {
+      const sortOrder1 = ensureComparable(route1['SortOrder'])
+      const sortOrder2 = ensureComparable(route2['SortOrder'])
+      return sortOrder1 - sortOrder2
     }),
   })).sort((message1, message2) => {
-    const priority1 = ensureComparable(message1['Priority']);
-    const priority2 = ensureComparable(message2['Priority']);
-    if (priority1 !== priority2) return priority1 - priority2;
+    const priority1 = ensureComparable(message1['Priority'])
+    const priority2 = ensureComparable(message2['Priority'])
+    if (priority1 !== priority2) return priority1 - priority2
 
-    const routeSortOrder1 = minimumComparable(message1['Routes'].map((route) => ensureComparable(route['SortOrder'])));
-    const routeSortOrder2 = minimumComparable(message2['Routes'].map((route) => ensureComparable(route['SortOrder'])));
-    return routeSortOrder1 - routeSortOrder2;
-  });
+    const routeSortOrder1 = minimumComparable(message1['Routes'].map((route) => ensureComparable(route['SortOrder'])))
+    const routeSortOrder2 = minimumComparable(message2['Routes'].map((route) => ensureComparable(route['SortOrder'])))
+    return routeSortOrder1 - routeSortOrder2
+  })
 }
 
 /**
@@ -139,7 +139,7 @@ function sortPublicMessages(publicMessages) {
  * @return {[{PublicMessageObject}]}
  * @see {usePublicMessages}
  */
-function normalizePublicMessages(publicMessages) {
+function normalizePublicMessages (publicMessages) {
   return publicMessages.map((message) => ({
     id: message['MessageId'],
     message: message['Message'],
@@ -150,5 +150,5 @@ function normalizePublicMessages(publicMessages) {
       color: route['Color'] || null,
       textColor: route['TextColor'] || null,
     })),
-  }));
+  }))
 }

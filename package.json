@@ -6,7 +6,7 @@
   "scripts": {
     "build": "vite build",
     "dev": "vite",
-    "lint": "eslint . --ext js,jsx",
+    "lint": "eslint",
     "lint:css": "stylelint **/*.css **/*.module.css",
     "preview": "vite preview"
   },
@@ -21,10 +21,7 @@
   },
   "devDependencies": {
     "eslint": "*",
-    "eslint-config-google":  "*",
-    "eslint-plugin-react": "*",
-    "eslint-plugin-react-hooks": "*",
-    "eslint-plugin-react-refresh": "*",
+    "neostandard": "*",
     "stylelint": "*",
     "stylelint-config-standard": "*"
   }

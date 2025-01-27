@@ -42,9 +42,3 @@ export default function PublicMessage ({ message, priority, routes }) {
     </tr>
   )
 }
-
-PublicMessage.propTypes = {
-  message: PropTypes.string.isRequired,
-  priority: PropTypes.number,
-  routes: PropTypes.array,
-}

@@ -19,7 +19,3 @@ export default function PublicMessageBoard ({ children }) {
     </table>
   )
 }
-
-PublicMessageBoard.propTypes = {
-  children: PropTypes.node,
-}

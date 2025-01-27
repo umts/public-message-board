@@ -1,4 +1,3 @@
-import PropTypes from 'prop-types'
 import classNames from './PublicMessageBoard.module.css'
 
 /**
@@ -18,8 +17,4 @@ export default function PublicMessageBoard ({ children }) {
       </tbody>
     </table>
   )
-}
-
-PublicMessageBoard.propTypes = {
-  children: PropTypes.node,
 }

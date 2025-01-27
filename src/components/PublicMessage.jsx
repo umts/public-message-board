@@ -1,5 +1,4 @@
 import DOMPurify from 'dompurify'
-import PropTypes from 'prop-types'
 import classNames from './PublicMessage.module.css'
 
 /**
@@ -41,10 +40,4 @@ export default function PublicMessage ({ message, priority, routes }) {
       />
     </tr>
   )
-}
-
-PublicMessage.propTypes = {
-  message: PropTypes.string.isRequired,
-  priority: PropTypes.number,
-  routes: PropTypes.array,
 }

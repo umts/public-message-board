@@ -1,5 +1,4 @@
 import DOMPurify from 'dompurify'
-import PropTypes from 'prop-types'
 import classNames from './PublicMessage.module.css'
 
 /**

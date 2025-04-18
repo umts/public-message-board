@@ -4,7 +4,6 @@ import { useCallback, useEffect, useMemo, useState } from 'react'
  * @typedef PublicMessageObject
  * @property {Number} id - a unique id for the message, from InfoPoint
  * @property {String} message - the text for a public message (HTML Supported).
- * @property {Number} priority - the priority of the message specified by Avail.
  * @property {[RouteObject]} routes - list of routes affected by this message, empty if message is general.
  */
 
@@ -24,7 +23,7 @@ import { useCallback, useEffect, useMemo, useState } from 'react'
  * - Will return `null` if an error occurs during fetching.
  * - Will re-fetch and re-process data periodically.
  * - Will apply filtering by route abbreviation if provided, always letting general messages through.
- * - Will sort public messages by priority, then the lowest sort order of its affected routes (general messages last).
+ * - Will sort public messages by the lowest sort order of its affected routes (general messages last).
  *
  * @param {URL} infoPoint - the URL of the InfoPoint API from which to get public message data.
  * @param {[String]|null} routes - a list of route abbreviations to whitelist, null if no filtering is to be applied.
@@ -104,7 +103,7 @@ function filterPublicMessages (publicMessages, routeAbbreviations) {
 }
 
 /**
- * Sorts public messages by priority, then the lowest sort order of its affected routes (general messages last).
+ * Sorts public messages by the lowest sort order of its affected routes (general messages last).
  *
  * @param {[{}]} publicMessages - raw public message data.
  * @return {[{}]}
@@ -122,10 +121,6 @@ function sortPublicMessages (publicMessages) {
       return sortOrder1 - sortOrder2
     }),
   })).sort((message1, message2) => {
-    const priority1 = ensureComparable(message1['Priority'])
-    const priority2 = ensureComparable(message2['Priority'])
-    if (priority1 !== priority2) return priority1 - priority2
-
     const routeSortOrder1 = minimumComparable(message1['Routes'].map((route) => ensureComparable(route['SortOrder'])))
     const routeSortOrder2 = minimumComparable(message2['Routes'].map((route) => ensureComparable(route['SortOrder'])))
     return routeSortOrder1 - routeSortOrder2
@@ -143,7 +138,6 @@ function normalizePublicMessages (publicMessages) {
   return publicMessages.map((message) => ({
     id: message['MessageId'],
     message: message['Message'],
-    priority: message['Priority'],
     routes: message['Routes'].map((route) => ({
       id: route['RouteId'],
       abbreviation: route['RouteAbbreviation'],

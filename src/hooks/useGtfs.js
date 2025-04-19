@@ -2,6 +2,16 @@ import JSZip from 'jszip'
 import Papa from 'papaparse'
 import { useEffect, useState } from 'react'
 
+async function parseCsvAsJson (csvString) {
+  return new Promise((resolve, reject) => {
+    Papa.parse(csvString, { header: true, complete: (result) => resolve(result.data) })
+  })
+}
+
+function removeExtension (filename) {
+  return filename.substring(0, filename.lastIndexOf('.')) || filename
+}
+
 export default function useGtfs (url) {
   const [data, setData] = useState([])
 
@@ -10,8 +20,13 @@ export default function useGtfs (url) {
       const response = await fetch(url)
       const buffer = await response.arrayBuffer()
       const zip = await JSZip.loadAsync(buffer)
-      const content = await zip.files['routes.txt'].async('text')
-      Papa.parse(content, { header: true, complete: (results) => setData(results.data) })
+      const data = {}
+      for (const [filename, file] of Object.entries(zip.files)) {
+        const csvString = await file.async('text')
+        data[removeExtension(filename)] = await parseCsvAsJson(csvString)
+      }
+      console.log(data)
+      setData('done')
     }
     refresh()
     const interval = setInterval(refresh, 30 * 1000)

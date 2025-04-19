@@ -1,17 +1,14 @@
-import JSZip from 'jszip'
-import Papa from 'papaparse'
+import GtfsRealtimeBindings from 'gtfs-realtime-bindings'
 import { useEffect, useState } from 'react'
 
-export default function useGtfs (url) {
+export default function useGtfsRealtime (url) {
   const [data, setData] = useState([])
-
   useEffect(() => {
     async function refresh () {
       const response = await fetch(url)
       const buffer = await response.arrayBuffer()
-      const zip = await JSZip.loadAsync(buffer)
-      const content = await zip.files['routes.txt'].async('text')
-      Papa.parse(content, { header: true, complete: (results) => setData(results.data) })
+      const data = GtfsRealtimeBindings.transit_realtime.FeedMessage.decode(new Uint8Array(buffer))
+      setData(data)
     }
     refresh()
     const interval = setInterval(refresh, 30 * 1000)

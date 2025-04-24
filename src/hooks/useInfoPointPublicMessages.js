@@ -3,6 +3,7 @@ import useRefresh from './useRefresh.js'
 
 export default function useInfoPointPublicMessages (url) {
   const fetchPublicMessages = useCallback(async () => {
+    if (!(url)) return null
     const response = await fetch(new URL('PublicMessages/GetCurrentMessages', url))
     const responseJson = await response.json()
     return responseJson.map((infoPointPublicMessage) => ({

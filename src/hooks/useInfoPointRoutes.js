@@ -3,6 +3,7 @@ import useRefresh from './useRefresh.js'
 
 export default function useInfoPointRoutes (url) {
   const fetchRoutes = useCallback(async () => {
+    if (!(url)) return null
     const response = await fetch(new URL('Routes/GetAllRoutes', url))
     const responseJson = await response.json()
     return responseJson.map((infoPointRoute) => ({

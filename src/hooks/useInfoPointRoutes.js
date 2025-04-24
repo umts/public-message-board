@@ -10,7 +10,8 @@ export default function useInfoPointRoutes (url) {
       routeId: infoPointRoute['RouteId'],
       routeShortName: infoPointRoute['RouteAbbreviation'],
       routeColor: infoPointRoute['Color'],
-      routeTextColor: infoPointRoute['TextColor']
+      routeTextColor: infoPointRoute['TextColor'],
+      routeSortOrder: infoPointRoute['SortOrder']
     }))
   }, [url])
   return useRefresh(fetchRoutes, 24 * 60 * 60 * 1000)

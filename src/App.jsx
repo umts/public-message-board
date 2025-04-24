@@ -11,13 +11,13 @@ import useDynamicHeight from './hooks/useDynamicHeight.js'
 export default function App () {
   useDynamicHeight()
   const gtfs = useGtfs('http://localhost:9292/gtfs')
-  const alerts = useGtfsRealtime('http://localhost:9292/gtfs-rt/trip-updates')
+  const alerts = useGtfsRealtime('http://localhost:9292/gtfs-rt/alerts')
   return (
     <div>
       <h2>GTFS (routes.txt)</h2>
       <hr />
-      <div><pre>{JSON.stringify(gtfs, null, 2)}</pre></div>
-      <h2>GTFS Realtime Trip Updates</h2>
+      <div><pre>{JSON.stringify(gtfs.routes, null, 2)}</pre></div>
+      <h2>GTFS Realtime Alerts</h2>
       <hr />
       <div><pre>{JSON.stringify(alerts, null, 2)}</pre></div>
     </div>

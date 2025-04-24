@@ -26,7 +26,7 @@ export default function useGtfs (url) {
         data[removeExtension(filename)] = await parseCsvAsJson(csvString)
       }
       console.log(data)
-      setData('done')
+      setData(data)
     }
     refresh()
     const interval = setInterval(refresh, 30 * 1000)

@@ -1,31 +1,22 @@
 import { camelCase } from 'change-case'
 import JSZip from 'jszip'
 import Papa from 'papaparse'
-import { useEffect, useState } from 'react'
+import { useCallback } from 'react'
+import useRefresh from './useRefresh.js'
 
 export default function useGtfs (gtfsUrl) {
-  const [gtfs, setGtfs] = useState(undefined)
-  useEffect(() => {
-    async function fetchGtfs () {
-      try {
-        const response = await fetch(gtfsUrl)
-        const responseBuffer = await response.arrayBuffer()
-        const zip = await JSZip.loadAsync(responseBuffer)
-        const data = {}
-        for (const [filename, file] of Object.entries(zip.files)) {
-          const csvString = await file.async('text')
-          data[removeExtension(filename)] = await parseCsvAsJson(csvString)
-        }
-        setGtfs(data)
-      } catch {
-        setGtfs(null)
-      }
+  const fetchGtfs = useCallback(async () => {
+    const response = await fetch(gtfsUrl)
+    const responseBuffer = await response.arrayBuffer()
+    const zip = await JSZip.loadAsync(responseBuffer)
+    const data = {}
+    for (const [filename, file] of Object.entries(zip.files)) {
+      const csvString = await file.async('text')
+      data[removeExtension(filename)] = await parseCsvAsJson(csvString)
     }
-    fetchGtfs()
-    const interval = setInterval(fetchGtfs, 24 * 60 * 60 * 1000)
-    return () => clearInterval(interval)
+    return data
   }, [gtfsUrl])
-  return gtfs
+  return useRefresh(fetchGtfs, 24 * 60 * 60 * 1000)
 }
 
 function removeExtension (filename) {

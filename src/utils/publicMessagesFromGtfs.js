@@ -6,7 +6,11 @@ export default function publicMessagesFromGtfs (routesGtfs, alertsGtfs, routeFil
   routesGtfs.forEach((routeGtfs) => { routesGtfsMap[routeGtfs.routeId] = routeGtfs })
 
   return alertsGtfs.filter((alertGtfs) => {
-    return true
+    if (routeFilter === null) return true
+    if (alertGtfs.alert.informedEntity.length === 0) return true
+    return [...new Set(alertGtfs.alert.informedEntity.map((entity) => entity.routeId))].some((routeId) =>
+      routeFilter.includes(routesGtfsMap[routeId].routeShortName)
+    )
   }).sort((alertGtfs1, alertGtfs2) => {
     return 0
   }).map((alertGtfs) => ({
@@ -14,7 +18,7 @@ export default function publicMessagesFromGtfs (routesGtfs, alertsGtfs, routeFil
     header: alertGtfs.alert.headerText?.translation[0]?.text,
     description: alertGtfs.alert.descriptionText.translation[0].text,
     routes: [...new Set(alertGtfs.alert.informedEntity.map((entity) => entity.routeId))].filter((routeId) => {
-      return true
+      return routeFilter === null || routeFilter.includes(routesGtfsMap[routeId].routeShortName)
     }).map((routeId) => ({
       id: routeId,
       abbreviation: routesGtfsMap[routeId].routeShortName,

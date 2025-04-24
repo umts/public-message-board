@@ -15,6 +15,7 @@
     "@vitejs/plugin-react": "*",
     "change-case": "*",
     "dompurify": "*",
+    "gtfs-realtime-bindings": "*",
     "jszip": "*",
     "papaparse": "*",
     "react": "*",

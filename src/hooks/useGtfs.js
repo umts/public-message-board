@@ -4,9 +4,9 @@ import Papa from 'papaparse'
 import { useCallback } from 'react'
 import useRefresh from './useRefresh.js'
 
-export default function useGtfs (gtfsUrl) {
+export default function useGtfs (url) {
   const fetchGtfs = useCallback(async () => {
-    const response = await fetch(gtfsUrl)
+    const response = await fetch(url)
     const responseBuffer = await response.arrayBuffer()
     const zip = await JSZip.loadAsync(responseBuffer)
     const data = {}
@@ -15,7 +15,7 @@ export default function useGtfs (gtfsUrl) {
       data[removeExtension(filename)] = await parseCsvAsJson(csvString)
     }
     return data
-  }, [gtfsUrl])
+  }, [url])
   return useRefresh(fetchGtfs, 24 * 60 * 60 * 1000)
 }
 

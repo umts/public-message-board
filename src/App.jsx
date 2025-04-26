@@ -3,7 +3,6 @@ import PublicMessageBoard from './components/PublicMessageBoard.jsx'
 import useConfig from './hooks/useConfig.js'
 import useDynamicHeight from './hooks/useDynamicHeight.js'
 import useGtfs from './hooks/useGtfs.js'
-import useGtfsFile from './hooks/useGtfsFile.js'
 import useGtfsRealtime from './hooks/useGtfsRealtime.js'
 import useInfoPointAlerts from './hooks/useInfoPointAlerts.js'
 import useInfoPointRoutes from './hooks/useInfoPointRoutes.js'
@@ -20,13 +19,12 @@ export default function App () {
   const { gtfs, gtfsRealtimeAlerts, infoPoint, routes } = useConfig()
 
   const gtfsData = useGtfs(gtfs)
-  const gtfsRoutes = useGtfsFile(gtfsData, 'routes')
-  const gtfsAlerts = useGtfsRealtime(gtfsRealtimeAlerts)?.entity
+  const gtfsAlerts = useGtfsRealtime(gtfsRealtimeAlerts)
   const infoPointRoutes = useInfoPointRoutes(infoPoint)
   const infoPointAlerts = useInfoPointAlerts(infoPoint)
 
-  const routeData = (gtfs) ? gtfsRoutes : infoPointRoutes
-  const alertData = (gtfsRealtimeAlerts) ? gtfsAlerts : infoPointAlerts
+  const routeData = (gtfs) ? gtfsData?.routes : infoPointRoutes
+  const alertData = (gtfsRealtimeAlerts) ? gtfsAlerts?.entity : infoPointAlerts
 
   const publicMessages = publicMessagesFromGtfs(routeData, alertData, routes)
 

@@ -19,7 +19,9 @@ function nestGtfs (routesGtfs, alertsGtfs) {
   })
 
   return alertsGtfs.map((alertGtfs) => {
-    const routeIds = [...new Set(alertGtfs.alert.informedEntity.map((entity) => entity.routeId))]
+    const routeIds = [
+      ...new Set(alertGtfs.alert.informedEntity.map((entity) => entity.routeId).filter((routeId) => routeId))
+    ]
     return {
       ...alertGtfs,
       alert: {
@@ -74,8 +76,8 @@ function sortGtfs (alertsGtfs) {
   return alertsGtfs.sort((alert1, alert2) => {
     const routeSortOrders1 = alert1.alert.informedEntity.map((route) => route.routeSortOrder)
     const routeSortOrders2 = alert2.alert.informedEntity.map((route) => route.routeSortOrder)
-    const sortOrder1 = (routeSortOrders1.length > 0) ? Math.min(...routeSortOrders1) : Infinity
-    const sortOrder2 = (routeSortOrders2.length > 0) ? Math.min(...routeSortOrders2) : Infinity
+    const sortOrder1 = (routeSortOrders1.length > 0) ? Math.min(...routeSortOrders1) : -Infinity
+    const sortOrder2 = (routeSortOrders2.length > 0) ? Math.min(...routeSortOrders2) : -Infinity
     return sortOrder1 - sortOrder2
   })
 }

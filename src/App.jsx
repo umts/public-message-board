@@ -29,25 +29,20 @@ export default function App () {
   const publicMessages = publicMessagesFromGtfs(routeData, alertData, routes)
 
   return (
-    <>
-      <PublicMessageBoard>
-        {(publicMessages === undefined)
-          ? (<></>)
-          : (publicMessages === null)
-              ? (<PublicMessage message='Failed to load message information.' />)
-              : (publicMessages.length === 0)
-                  ? (<PublicMessage message='There are no detours currently in effect.' />)
-                  : publicMessages.map(({ id, routes, ...message }) => (
-                    <PublicMessage
-                      key={id}
-                      routes={(routes.length > 0) ? routes : [{ id, abbreviation: 'ALL' }]}
-                      {...message}
-                    />
-                  ))}
-      </PublicMessageBoard>
-      <pre>{JSON.stringify(routeData, null, 2)}</pre>
-      <hr />
-      <pre>{JSON.stringify(alertData, null, 2)}</pre>
-    </>
+    <PublicMessageBoard>
+      {(publicMessages === undefined)
+        ? (<></>)
+        : (publicMessages === null)
+            ? (<PublicMessage message='Failed to load message information.' />)
+            : (publicMessages.length === 0)
+                ? (<PublicMessage message='There are no detours currently in effect.' />)
+                : publicMessages.map(({ id, routes, ...message }) => (
+                  <PublicMessage
+                    key={id}
+                    routes={(routes.length > 0) ? routes : [{ id, abbreviation: 'ALL' }]}
+                    {...message}
+                  />
+                ))}
+    </PublicMessageBoard>
   )
 }

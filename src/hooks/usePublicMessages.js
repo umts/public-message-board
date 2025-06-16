@@ -137,7 +137,7 @@ function sortPublicMessages (publicMessages) {
 function normalizePublicMessages (publicMessages) {
   return publicMessages.map((message) => ({
     id: message['MessageId'],
-    message: message['Message'],
+    description: message['Message'],
     routes: message['Routes'].map((route) => ({
       id: route['RouteId'],
       abbreviation: route['RouteAbbreviation'],

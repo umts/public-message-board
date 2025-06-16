@@ -9,7 +9,7 @@ import classNames from './PublicMessage.module.css'
  * @param {Array|undefined} routes - list of routes affected. Left undefined if message is an error
  * @return {JSX.Element}
  */
-export default function PublicMessage ({ message, routes }) {
+export default function PublicMessage ({ routes, header, description }) {
   return (
     <tr>
       {(routes) && (
@@ -28,7 +28,10 @@ export default function PublicMessage ({ message, routes }) {
           ))}
         </th>
       )}
-      <td colSpan={(routes) ? 1 : 2} dangerouslySetInnerHTML={{ __html: DOMPurify.sanitize(message) }} />
+      <td colSpan={(routes) ? 1 : 2}>
+        {(header) && (<div className={classNames['header']}>{header}</div>)}
+        <div dangerouslySetInnerHTML={{ __html: DOMPurify.sanitize(description) }} />
+      </td>
     </tr>
   )
 }

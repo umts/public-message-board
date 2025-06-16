@@ -10,3 +10,7 @@
 .route-abbreviation:last-of-type {
   margin-bottom: 0;
 }
+
+.header {
+  font-weight: 600;
+}

@@ -4,8 +4,7 @@ import useConfig from './hooks/useConfig.js'
 import useDynamicHeight from './hooks/useDynamicHeight.js'
 import useGtfs from './hooks/useGtfs.js'
 import useGtfsRealtime from './hooks/useGtfsRealtime.js'
-import useInfoPointAlerts from './hooks/useInfoPointAlerts.js'
-import useInfoPointRoutes from './hooks/useInfoPointRoutes.js'
+import usePublicMessages from './hooks/usePublicMessages.js'
 import publicMessagesFromGtfs from './utils/publicMessagesFromGtfs.js'
 
 /**
@@ -17,17 +16,11 @@ import publicMessagesFromGtfs from './utils/publicMessagesFromGtfs.js'
 export default function App () {
   useDynamicHeight()
   const { gtfs, gtfsRealtimeAlerts, infoPoint, routes } = useConfig()
-
   const gtfsData = useGtfs(gtfs)
   const gtfsAlerts = useGtfsRealtime(gtfsRealtimeAlerts)
-  const infoPointRoutes = useInfoPointRoutes(infoPoint)
-  const infoPointAlerts = useInfoPointAlerts(infoPoint)
-
-  const routeData = (gtfs) ? gtfsData?.routes : infoPointRoutes
-  const alertData = (gtfsRealtimeAlerts) ? gtfsAlerts?.entity : infoPointAlerts
-
-  const publicMessages = publicMessagesFromGtfs(routeData, alertData, routes)
-
+  const gtfsPublicMessages = publicMessagesFromGtfs(gtfsData?.routes, gtfsAlerts?.entity, routes)
+  const infoPointPublicMessages = usePublicMessages(infoPoint, routes)
+  const publicMessages = (gtfs && gtfsRealtimeAlerts) ? gtfsPublicMessages : infoPointPublicMessages
   return (
     <PublicMessageBoard>
       {(publicMessages === undefined)

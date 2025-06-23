@@ -68,7 +68,7 @@ function parseInfoPoint (arg) {
  *
  * @param {String|null} arg - a user provided configuration option.
  * @return {URL|null} the parsed URL.
- * @see {uesConfig}
+ * @see {useConfig}
  */
 function parseUrl (arg) {
   try {

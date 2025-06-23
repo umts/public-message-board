@@ -2,8 +2,8 @@ import { useMemo } from 'react'
 
 /**
  * @typedef ConfigObject
- * @property {URL|null} gtfs - a URL pointing to a remote gtfs feed zip file.
- * @property {URL|null} gtfsRealtimeAlerts - a URL pointing to a remote gtfs realtime alerts feed.
+ * @property {URL|null} gtfsScheduleUrl - a URL pointing to a remote gtfs feed zip file.
+ * @property {URL|null} gtfsRealtimeUrl - a URL pointing to a remote gtfs realtime alerts feed.
  * @property {URL|null} infoPoint - a URL pointing to a remote Avail InfoPoint rest API.
  * @property {[String]|null} routes - a list of route abbreviations to be used as a whitelist.
  */
@@ -11,10 +11,10 @@ import { useMemo } from 'react'
 /**
  * Hook responsible for parsing application configuration options from the window location's current search query.
  *
- * - `gtfs` optionally parses a fully qualified url in the search params.
- * - `gtfs` will be `null` if a parsing error occurs.
- * - `gtfsRealtimeAlerts` optionally parses a fully qualified url in the search params.
- * - `gtfsRealtimeAlerts` will be `null` if a parsing error occurs.
+ * - `gtfsScheduleUrl` optionally parses a fully qualified url in the search params.
+ * - `gtfsScheduleUrl` will be `null` if a parsing error occurs.
+ * - `gtfsRealtimeUrl` optionally parses a fully qualified url in the search params.
+ * - `gtfsRealtimeUrl` will be `null` if a parsing error occurs.
  * - `infoPoint` optionally parses a fully qualified url in the search params.
  * - `infoPoint` will have a trailing / appended if it is not present.
  * - `infoPoint` will default to the PVTA InfoPoint installation if none is provided.
@@ -41,8 +41,8 @@ export default function useConfig () {
   return useMemo(() => {
     const searchParams = new URLSearchParams(location.search)
     return {
-      gtfs: parseUrl(searchParams.get('gtfs')),
-      gtfsRealtimeAlerts: parseUrl(searchParams.get('gtfsRealtimeAlerts')),
+      gtfsScheduleUrl: parseUrl(searchParams.get('gtfsScheduleUrl')),
+      gtfsRealtimeUrl: parseUrl(searchParams.get('gtfsRealtimeUrl')),
       infoPoint: parseInfoPoint(searchParams.get('infoPoint')),
       routes: parseRoutes(searchParams.get('routes')),
     }

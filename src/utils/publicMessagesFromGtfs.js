@@ -1,52 +1,52 @@
-export default function publicMessagesFromGtfs (routesGtfs, alertsGtfs, routeFilter) {
-  if (routesGtfs === null || alertsGtfs === null) return null
-  if (routesGtfs === undefined || alertsGtfs === undefined) return undefined
+export default function publicMessagesFromGtfs (gtfsRoutes, gtfsAlerts, routeFilter) {
+  if (gtfsRoutes === null || gtfsAlerts === null) return null
+  if (gtfsRoutes === undefined || gtfsAlerts === undefined) return undefined
 
-  let gtfs = nestGtfs(routesGtfs, alertsGtfs)
+  let gtfs = nestGtfs(gtfsRoutes, gtfsAlerts)
   gtfs = filterGtfs(gtfs, routeFilter)
   gtfs = sortGtfs(gtfs)
   return normalizeGtfs(gtfs)
 }
 
-function nestGtfs (routesGtfs, alertsGtfs) {
+function nestGtfs (gtfsRoutes, gtfsAlerts) {
   const routesGtfsMap = {}
-  routesGtfs.forEach((routeGtfs) => { routesGtfsMap[routeGtfs.routeId] = routeGtfs })
+  gtfsRoutes.forEach((gtfsRoute) => { routesGtfsMap[gtfsRoute.routeId] = gtfsRoute })
 
   // filter out alerts that contain routes that we don't recognize
   // can happen if a long-running alert is created for a route before a change in the gtfs file removes it
-  alertsGtfs = alertsGtfs.filter((alertGtfs) => {
-    return alertGtfs.alert.informedEntity.every((entity) => entity.routeId in routesGtfsMap)
+  gtfsAlerts = gtfsAlerts.filter((gtfsAlert) => {
+    return gtfsAlert.alert.informedEntity.every((entity) => entity.routeId in routesGtfsMap)
   })
 
-  return alertsGtfs.map((alertGtfs) => {
+  return gtfsAlerts.map((gtfsAlert) => {
     const routeIds = [
-      ...new Set(alertGtfs.alert.informedEntity.map((entity) => entity.routeId).filter((routeId) => routeId))
+      ...new Set(gtfsAlert.alert.informedEntity.map((entity) => entity.routeId).filter((routeId) => routeId))
     ]
     return {
-      ...alertGtfs,
+      ...gtfsAlert,
       alert: {
-        ...alertGtfs.alert,
+        ...gtfsAlert.alert,
         informedEntity: routeIds.map((routeId) => routesGtfsMap[routeId])
       }
     }
   })
 }
 
-function filterGtfs (alertsGtfs, routeFilter) {
-  alertsGtfs = alertsGtfs.filter((alertGtfs) => {
+function filterGtfs (gtfsAlerts, routeFilter) {
+  gtfsAlerts = gtfsAlerts.filter((gtfsAlert) => {
     if (routeFilter === null) return true
-    if (alertGtfs.alert.informedEntity.length === 0) return true
+    if (gtfsAlert.alert.informedEntity.length === 0) return true
 
-    return alertGtfs.alert.informedEntity.some((route) => routeFilter.includes(route.routeShortName))
+    return gtfsAlert.alert.informedEntity.some((route) => routeFilter.includes(route.routeShortName))
   })
 
   // filter individual routes
-  return alertsGtfs.map((alertGtfs) => {
+  return gtfsAlerts.map((gtfsAlert) => {
     return {
-      ...alertGtfs,
+      ...gtfsAlert,
       alert: {
-        ...alertGtfs.alert,
-        informedEntity: alertGtfs.alert.informedEntity.filter((route) => {
+        ...gtfsAlert.alert,
+        informedEntity: gtfsAlert.alert.informedEntity.filter((route) => {
           if (routeFilter === null) return true
 
           return routeFilter.includes(route.routeShortName)
@@ -56,14 +56,14 @@ function filterGtfs (alertsGtfs, routeFilter) {
   })
 }
 
-function sortGtfs (alertsGtfs) {
+function sortGtfs (gtfsAlerts) {
   // sort individual routes
-  alertsGtfs = alertsGtfs.map((alertGtfs) => {
+  gtfsAlerts = gtfsAlerts.map((gtfsAlert) => {
     return {
-      ...alertGtfs,
+      ...gtfsAlert,
       alert: {
-        ...alertGtfs.alert,
-        informedEntity: alertGtfs.alert.informedEntity.sort((route1, route2) => {
+        ...gtfsAlert.alert,
+        informedEntity: gtfsAlert.alert.informedEntity.sort((route1, route2) => {
           const sortOrder1 = (route1.routeSortOrder) ? parseInt(route1.routeSortOrder) : Infinity
           const sortOrder2 = (route2.routeSortOrder) ? parseInt(route2.routeSortOrder) : Infinity
           return sortOrder1 - sortOrder2
@@ -73,7 +73,7 @@ function sortGtfs (alertsGtfs) {
   })
 
   // sort by lowest route sort order
-  return alertsGtfs.sort((alert1, alert2) => {
+  return gtfsAlerts.sort((alert1, alert2) => {
     const routeSortOrders1 = alert1.alert.informedEntity.map((route) => route.routeSortOrder)
     const routeSortOrders2 = alert2.alert.informedEntity.map((route) => route.routeSortOrder)
     const sortOrder1 = (routeSortOrders1.length > 0) ? Math.min(...routeSortOrders1) : -Infinity
@@ -83,12 +83,12 @@ function sortGtfs (alertsGtfs) {
 }
 
 function normalizeGtfs (gtfs) {
-  return gtfs.map((alertGtfs) => {
+  return gtfs.map((gtfsAlert) => {
     return {
-      id: alertGtfs.id,
-      header: alertGtfs.alert.headerText?.translation[0]?.text,
-      description: alertGtfs.alert.descriptionText.translation[0].text,
-      routes: alertGtfs.alert.informedEntity.map((route) => {
+      id: gtfsAlert.id,
+      header: gtfsAlert.alert.headerText?.translation[0]?.text,
+      description: gtfsAlert.alert.descriptionText.translation[0].text,
+      routes: gtfsAlert.alert.informedEntity.map((route) => {
         return {
           id: route.routeId,
           abbreviation: route.routeShortName,

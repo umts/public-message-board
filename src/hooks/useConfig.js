@@ -2,6 +2,8 @@ import { useMemo } from 'react'
 
 /**
  * @typedef ConfigObject
+ * @property {URL|null} gtfsScheduleUrl - a URL pointing to a remote gtfs feed zip file.
+ * @property {URL|null} gtfsRealtimeAlertsUrl - a URL pointing to a remote gtfs realtime alerts feed.
  * @property {URL|null} infoPoint - a URL pointing to a remote Avail InfoPoint rest API.
  * @property {[String]|null} routes - a list of route abbreviations to be used as a whitelist.
  */
@@ -9,6 +11,10 @@ import { useMemo } from 'react'
 /**
  * Hook responsible for parsing application configuration options from the window location's current search query.
  *
+ * - `gtfsScheduleUrl` optionally parses a fully qualified url in the search params.
+ * - `gtfsScheduleUrl` will be `null` if a parsing error occurs.
+ * - `gtfsRealtimeAlertsUrl` optionally parses a fully qualified url in the search params.
+ * - `gtfsRealtimeAlertsUrl` will be `null` if a parsing error occurs.
  * - `infoPoint` optionally parses a fully qualified url in the search params.
  * - `infoPoint` will have a trailing / appended if it is not present.
  * - `infoPoint` will default to the PVTA InfoPoint installation if none is provided.
@@ -35,6 +41,8 @@ export default function useConfig () {
   return useMemo(() => {
     const searchParams = new URLSearchParams(location.search)
     return {
+      gtfsScheduleUrl: parseUrl(searchParams.get('gtfsScheduleUrl')),
+      gtfsRealtimeAlertsUrl: parseUrl(searchParams.get('gtfsRealtimeAlertsUrl')),
       infoPoint: parseInfoPoint(searchParams.get('infoPoint')),
       routes: parseRoutes(searchParams.get('routes')),
     }
@@ -50,10 +58,21 @@ export default function useConfig () {
  */
 function parseInfoPoint (arg) {
   arg ??= 'https://bustracker.pvta.com/InfoPoint/rest/'
+  const url = parseUrl(arg)
+  if (url !== null && !(url.pathname.endsWith('/'))) url.pathname = `${url.pathname}/`
+  return url
+}
+
+/**
+ * Parses a URL, returning null if a parsing error occurs.
+ *
+ * @param {String|null} arg - a user provided configuration option.
+ * @return {URL|null} the parsed URL.
+ * @see {useConfig}
+ */
+function parseUrl (arg) {
   try {
-    const url = new URL(arg)
-    if (!(url.pathname.endsWith('/'))) url.pathname = `${url.pathname}/`
-    return url
+    return new URL(arg)
   } catch {
     return null
   }

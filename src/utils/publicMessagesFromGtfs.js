@@ -86,7 +86,7 @@ function normalizeGtfs (gtfs) {
   return gtfs.map((gtfsAlert) => {
     return {
       id: gtfsAlert.id,
-      header: gtfsAlert.alert.headerText?.translation[0]?.text,
+      header: gtfsAlert.alert.headerText.translation[0].text,
       description: gtfsAlert.alert.descriptionText.translation[0].text,
       routes: gtfsAlert.alert.informedEntity.map((route) => {
         return {

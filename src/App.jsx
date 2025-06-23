@@ -15,12 +15,12 @@ import publicMessagesFromGtfs from './utils/publicMessagesFromGtfs.js'
  */
 export default function App () {
   useDynamicHeight()
-  const { gtfsScheduleUrl, gtfsRealtimeUrl, infoPoint, routes } = useConfig()
+  const { gtfsScheduleUrl, gtfsRealtimeAlertsUrl, infoPoint, routes } = useConfig()
   const gtfsSchedule = useGtfsSchedule(gtfsScheduleUrl)
-  const gtfsRealtime = useGtfsRealtime(gtfsRealtimeUrl)
-  const gtfsPublicMessages = publicMessagesFromGtfs(gtfsSchedule?.routes, gtfsRealtime?.entity, routes)
+  const gtfsRealtimeAlerts = useGtfsRealtime(gtfsRealtimeAlertsUrl)
+  const gtfsPublicMessages = publicMessagesFromGtfs(gtfsSchedule?.routes, gtfsRealtimeAlerts?.entity, routes)
   const infoPointPublicMessages = usePublicMessages(infoPoint, routes)
-  const publicMessages = (gtfsScheduleUrl && gtfsRealtimeUrl) ? gtfsPublicMessages : infoPointPublicMessages
+  const publicMessages = (gtfsScheduleUrl && gtfsRealtimeAlertsUrl) ? gtfsPublicMessages : infoPointPublicMessages
   return (
     <PublicMessageBoard>
       {(publicMessages === undefined)

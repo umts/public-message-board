@@ -3,7 +3,7 @@ import { useMemo } from 'react'
 /**
  * @typedef ConfigObject
  * @property {URL|null} gtfsScheduleUrl - a URL pointing to a remote gtfs feed zip file.
- * @property {URL|null} gtfsRealtimeUrl - a URL pointing to a remote gtfs realtime alerts feed.
+ * @property {URL|null} gtfsRealtimeAlertsUrl - a URL pointing to a remote gtfs realtime alerts feed.
  * @property {URL|null} infoPoint - a URL pointing to a remote Avail InfoPoint rest API.
  * @property {[String]|null} routes - a list of route abbreviations to be used as a whitelist.
  */
@@ -13,8 +13,8 @@ import { useMemo } from 'react'
  *
  * - `gtfsScheduleUrl` optionally parses a fully qualified url in the search params.
  * - `gtfsScheduleUrl` will be `null` if a parsing error occurs.
- * - `gtfsRealtimeUrl` optionally parses a fully qualified url in the search params.
- * - `gtfsRealtimeUrl` will be `null` if a parsing error occurs.
+ * - `gtfsRealtimeAlertsUrl` optionally parses a fully qualified url in the search params.
+ * - `gtfsRealtimeAlertsUrl` will be `null` if a parsing error occurs.
  * - `infoPoint` optionally parses a fully qualified url in the search params.
  * - `infoPoint` will have a trailing / appended if it is not present.
  * - `infoPoint` will default to the PVTA InfoPoint installation if none is provided.
@@ -42,7 +42,7 @@ export default function useConfig () {
     const searchParams = new URLSearchParams(location.search)
     return {
       gtfsScheduleUrl: parseUrl(searchParams.get('gtfsScheduleUrl')),
-      gtfsRealtimeUrl: parseUrl(searchParams.get('gtfsRealtimeUrl')),
+      gtfsRealtimeAlertsUrl: parseUrl(searchParams.get('gtfsRealtimeAlertsUrl')),
       infoPoint: parseInfoPoint(searchParams.get('infoPoint')),
       routes: parseRoutes(searchParams.get('routes')),
     }

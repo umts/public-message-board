@@ -4,7 +4,7 @@ import Papa from 'papaparse'
 import { useCallback, useEffect, useState } from 'react'
 import useRefresh from './useRefresh.js'
 
-export default function useGtfs (url) {
+export default function useGtfsSchedule (url) {
   const fetchGtfs = useCallback(async () => {
     if (!(url)) return null
     const response = await fetch(url)

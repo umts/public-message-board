@@ -8,32 +8,27 @@ An embeddable SPA that displays live public message information for a transit or
 This application is meant to be embedded statically within websites using `<iframe>`s, and configurable
 through url search parameters.
 
-### Embedding
-
-```html
-<iframe src="https://pvta-public-messages.admin.umass.edu"
-        style="display: block; width: 100%; border: none;"
-        onload="window.addEventListener('message', (e) => { if (new window.URL(e.origin).origin === new window.URL(this.src).origin) { this.height = e.data.height; } });">
-</iframe>
-```
-
 ### Configuration
 
 Configuration options are passed using url search parameters (query strings) as outlined below.
 
-- `?infoPoint=https://your-avail-instance/InfoPoint/rest/` will change the avail instance that the application retrieves
-  data from (defaults to the [PVTA][pvta]'s [instance][pvta-avail]).
-- `?routes=A1,B2,C3` will provide a list of routes that you want to display messages for (will show all messages by
-  default, and general messages will always be displayed).
+- Required
+  - `?gtfsScheduleUrl=https://example.com/gtfs/schedule` will fetch GTFS Schedule data from the specified URL.
+  - `?gtfsRealtimeAlertsUrl=https://example.com/gtfs/alerts/v2` will fetch GTFS Realtime data from the specified URL.
+- Optional
+  - `?routes=A1,B2,C3` will provide a list of routes that you want to display messages for. By default, all messages
+    will be displayed. General messages will always be shown.
 
 A fully configured embedding to show messages for the UMass campus shuttle will look like:
 
 ```html
-<iframe src="https://pvta-public-messages.admin.umass.edu/?infoPoint=https://bustracker.pvta.com/InfoPoint/rest&routes=34,35"
+<iframe src="https://example.com/?gtfsScheduleUrl=https://example.com/gtfs/schedule&gtfsRealtimeAlertsUrl=https://example.com/gtfs/alerts/v2&routes=34,35"
         style="display: block; width: 100%; border: none;"
         onload="window.addEventListener('message', (e) => { if (new window.URL(e.origin).origin === new window.URL(this.src).origin) { this.height = e.data.height; } });">
 </iframe>
 ```
+
+The GTFS endpoints must obey the [GTFS Standard][gtfs-standard], otherwise the board will fail to display any information.
 
 ## Development
 
@@ -73,7 +68,7 @@ The application is available as open source under the terms of the [MIT License]
 
 [avail]: https://www.availtec.com/
 [github]: https://github.com/umts/avail-message-board
-[infopoint]: https://bustracker.pvta.com/InfoPoint/swagger
+[gtfs-standard]: https://gtfs.org/documentation/overview
 [license]: https://opensource.org/licenses/MIT
 [nodejs]: https://nodejs.org
 [nodenv]: https://github.com/nodenv/nodenv

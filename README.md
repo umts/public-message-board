@@ -22,7 +22,7 @@ Configuration options are passed using url search parameters (query strings) as 
 A fully configured embedding to show messages for the UMass campus shuttle will look like:
 
 ```html
-<iframe src="https://example.com/?gtfsScheduleUrl=https://example.com/gtfs/schedule&gtfsRealtimeAlertsUrl=https://example.com/gtfs/alerts/v2&routes=34,35"
+<iframe src="https://pvta-public-messages.admin.umass.edu/?gtfsScheduleUrl=https://example.com/gtfs/schedule&gtfsRealtimeAlertsUrl=https://example.com/gtfs/alerts/v2&routes=34,35"
         style="display: block; width: 100%; border: none;"
         onload="window.addEventListener('message', (e) => { if (new window.URL(e.origin).origin === new window.URL(this.src).origin) { this.height = e.data.height; } });">
 </iframe>
@@ -36,7 +36,7 @@ This application uses [`react`][react] as a framework and is bundled using [`vit
 through [`node.js`][nodejs] + [`npm`][npm]. It is recommended that you use
 [`nodenv`][nodenv] to manage local node installations.
 
-It is entirely clientside and data is fetched remotely from an Avail [InfoPoint API][infopoint] instance.
+It is entirely clientside. All data is retrieved from the endpoints provided in the URL search parameters.
 
 ### Requirements
 

@@ -15,7 +15,8 @@ function nestGtfs (gtfsRoutes, gtfsAlerts) {
   // filter out alerts that contain routes that we don't recognize
   // can happen if a long-running alert is created for a route before a change in the gtfs file removes it
   gtfsAlerts = gtfsAlerts.filter((gtfsAlert) => {
-    return gtfsAlert.alert.informedEntity.every((entity) => entity.routeId in routesGtfsMap)
+    return gtfsAlert.alert.informedEntity.every((entity) => entity.agencyId === "SATCo" ||
+                                                            entity.routeId in routesGtfsMap)
   })
 
   return gtfsAlerts.map((gtfsAlert) => {

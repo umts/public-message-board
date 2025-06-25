@@ -4,7 +4,6 @@ import useConfig from './hooks/useConfig.js'
 import useDynamicHeight from './hooks/useDynamicHeight.js'
 import { useGtfsSchedule, useGtfsRealtime } from 'gtfs-react-hooks'
 import { useCallback } from 'react'
-import usePublicMessages from './hooks/usePublicMessages.js'
 import publicMessagesFromGtfs from './utils/publicMessagesFromGtfs.js'
 
 /**
@@ -15,7 +14,7 @@ import publicMessagesFromGtfs from './utils/publicMessagesFromGtfs.js'
  */
 export default function App () {
   useDynamicHeight()
-  const { gtfsScheduleUrl, gtfsRealtimeAlertsUrl, infoPoint, routes } = useConfig()
+  const { gtfsScheduleUrl, gtfsRealtimeAlertsUrl, routes } = useConfig()
 
   const fetchGtfsSchedule = useCallback(async () => {
     const response = await fetch(gtfsScheduleUrl)
@@ -29,9 +28,8 @@ export default function App () {
   }, [])
   const gtfsRealtimeAlerts = useGtfsRealtime(fetchGtfsRealtime, 30 * 1000)
 
-  const gtfsPublicMessages = publicMessagesFromGtfs(gtfsSchedule?.routes, gtfsRealtimeAlerts?.entity, routes)
-  const infoPointPublicMessages = usePublicMessages(infoPoint, routes)
-  const publicMessages = (gtfsScheduleUrl && gtfsRealtimeAlertsUrl) ? gtfsPublicMessages : infoPointPublicMessages
+  const publicMessages = publicMessagesFromGtfs(gtfsSchedule?.routes, gtfsRealtimeAlerts?.entity, routes)
+
   return (
     <PublicMessageBoard>
       {(publicMessages === undefined)

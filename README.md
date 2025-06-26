@@ -1,7 +1,7 @@
 # Public Message Board
 
 An embeddable SPA that displays live public message information for a transit organization using
-[Avail Technologies'][avail] operations software.
+[GTFS][gtfs-standard] endpoints.
 
 ## Usage
 
@@ -66,7 +66,6 @@ Bug reports and pull requests are welcome on [GitHub][github].
 
 The application is available as open source under the terms of the [MIT License](license).
 
-[avail]: https://www.availtec.com/
 [github]: https://github.com/umts/avail-message-board
 [gtfs-standard]: https://gtfs.org/documentation/overview
 [license]: https://opensource.org/licenses/MIT

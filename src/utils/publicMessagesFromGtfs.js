@@ -12,11 +12,12 @@ function nestGtfs (gtfsRoutes, gtfsAlerts) {
   const routesGtfsMap = {}
   gtfsRoutes.forEach((gtfsRoute) => { routesGtfsMap[gtfsRoute.routeId] = gtfsRoute })
 
-  // filter out alerts that contain routes that we don't recognize
-  // can happen if a long-running alert is created for a route before a change in the gtfs file removes it
+  // Sometimes alerts have their routes vanish from the schedule. We don't want to display those alerts, so filter
+  // them out. Alerts are prototyped, so blank route ids end up being empty strings. So we will end up filtering
+  // out agency wide alerts without that second conditional.
   gtfsAlerts = gtfsAlerts.filter((gtfsAlert) => {
-    return gtfsAlert.alert.informedEntity.every((entity) => entity.agencyId === 'SATCo' ||
-                                                            entity.routeId in routesGtfsMap)
+    return gtfsAlert.alert.informedEntity.every((entity) => entity.routeId in routesGtfsMap) ||
+           gtfsAlert.alert.informedEntity.every((entity) => entity.agencyId && entity.routeId === "")
   })
 
   return gtfsAlerts.map((gtfsAlert) => {

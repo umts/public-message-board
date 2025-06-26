@@ -16,7 +16,7 @@ function nestGtfs (gtfsRoutes, gtfsEntities) {
   // them out. Alerts are prototyped, so blank route ids end up being empty strings. So we will end up filtering
   // out agency wide alerts without that second conditional.
   gtfsEntities = gtfsEntities.filter((gtfsEntity) => {
-    return gtfsEntity.alert.informedEntity.every((entity) => entity.routeId in routesGtfsMap) ||
+    return gtfsEntity.alert.informedEntity.some((entity) => entity.routeId in routesGtfsMap) ||
            gtfsEntity.alert.informedEntity.every((entity) => entity.agencyId && entity.routeId === '')
   })
 
@@ -28,7 +28,7 @@ function nestGtfs (gtfsRoutes, gtfsEntities) {
       ...gtfsEntity,
       alert: {
         ...gtfsEntity.alert,
-        informedEntity: routeIds.map((routeId) => routesGtfsMap[routeId])
+        informedEntity: routeIds.map((routeId) => routesGtfsMap[routeId]).filter((route) => route)
       }
     }
   })

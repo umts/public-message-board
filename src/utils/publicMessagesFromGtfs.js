@@ -95,7 +95,7 @@ function normalizeGtfs (gtfs) {
           id: route.routeId,
           abbreviation: route.routeShortName,
           color: route.routeColor,
-          textColor: route.textColor,
+          textColor: route.routeTextColor,
         }
       })
     }

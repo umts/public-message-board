@@ -12,13 +12,4 @@ updates:
       development:
         dependency-type: "development"
         update-types:
-          - "minor"
           - "patch"
-      production:
-        dependency-type: "production"
-        update-types:
-          - "minor"
-          - "patch"
-        exclude-patterns:
-          - "react"
-          - "react-dom"

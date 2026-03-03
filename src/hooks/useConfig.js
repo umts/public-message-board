@@ -32,12 +32,15 @@ export default function useConfig () {
   return useMemo(() => {
     const searchParams = new URLSearchParams(location.search)
     return {
-      gtfsScheduleUrl: parseUrl(searchParams.get('gtfsScheduleUrl')),
-      gtfsRealtimeAlertsUrl: parseUrl(searchParams.get('gtfsRealtimeAlertsUrl')),
+      gtfsScheduleUrl: parseUrl(searchParams.get('gtfsScheduleUrl')) || DEFAULT_GTFS_SCHEDULE_URL,
+      gtfsRealtimeAlertsUrl: parseUrl(searchParams.get('gtfsRealtimeAlertsUrl')) || DEFAULT_GTFS_REALTIME_ALERTS_URL,
       routes: parseRoutes(searchParams.get('routes')),
     }
   }, [])
 }
+
+const DEFAULT_GTFS_SCHEDULE_URL = new URL('https://gtfs-cache.admin.umass.edu/gtfs')
+const DEFAULT_GTFS_REALTIME_ALERTS_URL = new URL('https://gtfs-cache.admin.umass.edu/gtfs-rt/alerts')
 
 /**
  * Parses a URL, returning null if a parsing error occurs.

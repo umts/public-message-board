@@ -3,4 +3,24 @@ updates:
   - package-ecosystem: npm
     directory: /
     schedule:
+      interval: daily
+    groups:
+      react:
+        patterns:
+          - "react"
+          - "react-dom"
+      development:
+        dependency-type: "development"
+        update-types:
+          - "patch"
+      production:
+        dependency-type: "production"
+        update-types:
+          - "patch"
+        exclude-patterns:
+          - "react"
+          - "react-dom"
+  - package-ecosystem: github-actions
+    directory: /
+    schedule:
       interval: weekly

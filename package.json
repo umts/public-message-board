@@ -13,11 +13,8 @@
   "dependencies": {
     "@fontsource/open-sans": "*",
     "@vitejs/plugin-react": "*",
-    "change-case": "*",
     "dompurify": "*",
     "gtfs-react-hooks": "*",
-    "jszip": "*",
-    "papaparse": "*",
     "react": "*",
     "react-dom": "*",
     "vite": "*"

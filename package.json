@@ -20,8 +20,11 @@
     "vite": "*"
   },
   "devDependencies": {
+    "@eslint/js": "*",
     "eslint": "*",
-    "neostandard": "*",
+    "eslint-plugin-react-hooks": "*",
+    "eslint-plugin-react-refresh": "*",
+    "globals": "*",
     "stylelint": "*",
     "stylelint-config-standard": "*"
   }

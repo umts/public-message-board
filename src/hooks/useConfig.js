@@ -2,7 +2,7 @@ import { useMemo } from 'react'
 
 /**
  * @typedef ConfigObject
- * @property {URL|null} gtfsScheduleUrl - a URL pointing to a remote gtfs feed zip file.
+ * @property {URL|null} gtfsRouteUrl - a URL pointing to a remote gtfs feed routes.txt file.
  * @property {URL|null} gtfsRealtimeAlertsUrl - a URL pointing to a remote gtfs realtime alerts feed.
  * @property {[String]|null} routes - a list of route abbreviations to be used as a whitelist.
  */
@@ -10,8 +10,8 @@ import { useMemo } from 'react'
 /**
  * Hook responsible for parsing application configuration options from the window location's current search query.
  *
- * - `gtfsScheduleUrl` optionally parses a fully qualified url in the search params.
- * - `gtfsScheduleUrl` will be `null` if a parsing error occurs or no url is passed.
+ * - `gtfsRouteUrl` optionally parses a fully qualified url in the search params.
+ * - `gtfsRouteUrl` will be `null` if a parsing error occurs or no url is passed.
  * - `gtfsRealtimeAlertsUrl` optionally parses a fully qualified url in the search params.
  * - `gtfsRealtimeAlertsUrl` will be `null` if a parsing error occurs or no url is passed.
  * - `routes` optionally parses a comma-separated list of route abbreviations in the search params.
@@ -19,12 +19,12 @@ import { useMemo } from 'react'
  * - `routes` will default to `null` if no option is provided.
  *
  * @example
- * // https://example.com/?gtfsScheduleUrl=https://example.com/gtfs/schedule&gtfsRealtimeAlertsUrl=https://example.com/gtfs/alerts/v2&routes=A1,B2
- * // results in {gtfsScheduleUrl: URL(https://example.com/gtfs/schedule), gtfsRealtimeAlertsUrl: URL(https://example.com/gtfs/alerts/v2) routes: ['A1', 'B2']}
+ * // https://example.com/?gtfsRouteUrl=https://example.com/gtfs/schedule/routes&gtfsRealtimeAlertsUrl=https://example.com/gtfs/alerts/v2&routes=A1,B2
+ * // results in {gtfsRouteUrl: URL(https://example.com/gtfs/schedule/routes), gtfsRealtimeAlertsUrl: URL(https://example.com/gtfs/alerts/v2) routes: ['A1', 'B2']}
  *
  * @example
  * // https://example.com/?gtfsSchduleUrl=badurl&routes=
- * // results in {gtfsScheduleUrl: null, gtfsRealtimeAlertsUrl: null, routes: []}
+ * // results in {gtfsRouteUrl: null, gtfsRealtimeAlertsUrl: null, routes: []}
  *
  * @return {ConfigObject}
  */
@@ -32,14 +32,14 @@ export default function useConfig () {
   return useMemo(() => {
     const searchParams = new URLSearchParams(location.search)
     return {
-      gtfsScheduleUrl: parseUrl(searchParams.get('gtfsScheduleUrl')) || DEFAULT_GTFS_SCHEDULE_URL,
+      gtfsRouteUrl: parseUrl(searchParams.get('gtfsScheduleCsvUrl')) || DEFAULT_GTFS_ROUTE_URL,
       gtfsRealtimeAlertsUrl: parseUrl(searchParams.get('gtfsRealtimeAlertsUrl')) || DEFAULT_GTFS_REALTIME_ALERTS_URL,
       routes: parseRoutes(searchParams.get('routes')),
     }
   }, [])
 }
 
-const DEFAULT_GTFS_SCHEDULE_URL = new URL('https://gtfs-cache.admin.umass.edu/gtfs')
+const DEFAULT_GTFS_ROUTE_URL = new URL('https://gtfs-cache.admin.umass.edu/gtfs/routes')
 const DEFAULT_GTFS_REALTIME_ALERTS_URL = new URL('https://gtfs-cache.admin.umass.edu/gtfs-rt/alerts')
 
 /**

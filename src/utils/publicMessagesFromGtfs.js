@@ -1,6 +1,6 @@
 export default function publicMessagesFromGtfs(gtfsRoutes, gtfsEntities, routeFilter) {
   if (gtfsRoutes === null || gtfsEntities === null) return null;
-  if (gtfsRoutes === undefined || gtfsEntities === undefined) return undefined;
+  if (gtfsRoutes === undefined || gtfsEntities === undefined) return;
 
   let gtfs = nestGtfs(gtfsRoutes, gtfsEntities);
   gtfs = filterGtfs(gtfs, routeFilter);
@@ -75,9 +75,9 @@ function sortGtfs(gtfsEntities) {
       ...gtfsEntity,
       alert: {
         ...gtfsEntity.alert,
-        informedEntity: gtfsEntity.alert.informedEntity.sort((route1, route2) => {
-          const sortOrder1 = route1.routeSortOrder ? parseInt(route1.routeSortOrder) : Infinity;
-          const sortOrder2 = route2.routeSortOrder ? parseInt(route2.routeSortOrder) : Infinity;
+        informedEntity: gtfsEntity.alert.informedEntity.toSorted((route1, route2) => {
+          const sortOrder1 = route1.routeSortOrder ? Number.parseInt(route1.routeSortOrder) : Infinity;
+          const sortOrder2 = route2.routeSortOrder ? Number.parseInt(route2.routeSortOrder) : Infinity;
           return sortOrder1 - sortOrder2;
         }),
       },
@@ -85,7 +85,7 @@ function sortGtfs(gtfsEntities) {
   });
 
   // sort by lowest route sort order
-  return gtfsEntities.sort((alert1, alert2) => {
+  return gtfsEntities.toSorted((alert1, alert2) => {
     const routeSortOrders1 = alert1.alert.informedEntity.map((route) => route.routeSortOrder);
     const routeSortOrders2 = alert2.alert.informedEntity.map((route) => route.routeSortOrder);
     const sortOrder1 = routeSortOrders1.length > 0 ? Math.min(...routeSortOrders1) : -Infinity;

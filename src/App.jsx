@@ -13,7 +13,7 @@ import publicMessagesFromGtfs from "./utils/publicMessagesFromGtfs.js";
  */
 export default function App() {
   useDynamicHeight();
-  const { gtfsScheduleRoutesUrl, gtfsRealtimeAlertsUrl, routes } = useConfig();
+  const { gtfsScheduleRoutesUrl, gtfsRealtimeAlertsUrl, routesFilter } = useConfig();
 
   const fetchGtfsRoutes = useFetchResolver(gtfsScheduleRoutesUrl);
   const gtfsRoutes = useGtfsScheduleCsv(fetchGtfsRoutes, 24 * 60 * 60 * 1000);
@@ -21,12 +21,12 @@ export default function App() {
   const fetchGtfsRealtime = useFetchResolver(gtfsRealtimeAlertsUrl);
   const gtfsRealtimeAlerts = useGtfsRealtime(fetchGtfsRealtime, 30 * 1000);
 
-  const publicMessages = publicMessagesFromGtfs(gtfsRoutes, gtfsRealtimeAlerts?.entity, routes);
+  const publicMessages = publicMessagesFromGtfs(gtfsRoutes, gtfsRealtimeAlerts?.entity, routesFilter);
 
   return (
     <PublicMessageBoard>
       {publicMessages === undefined ? (
-        <></>
+        null
       ) : publicMessages === null ? (
         <PublicMessage message="Failed to load message information." />
       ) : publicMessages.length === 0 ? (
@@ -35,7 +35,7 @@ export default function App() {
         publicMessages.map(({ id, routes, ...message }) => (
           <PublicMessage
             key={id}
-            routes={routes.length > 0 ? routes : [{ id, abbreviation: "ALL" }]}
+            routes={routes.length > 0 ? routes : allRoutes}
             {...message}
           />
         ))
@@ -43,3 +43,5 @@ export default function App() {
     </PublicMessageBoard>
   );
 }
+
+const allRoutes = [{ id: 'all', abbreviation: "ALL" }];

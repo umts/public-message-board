@@ -10,50 +10,48 @@ export default function publicMessagesFromGtfs(gtfsRoutes, gtfsEntities, routeFi
 
 function nestGtfs(gtfsRoutes, gtfsEntities) {
   const routesGtfsMap = {};
-  gtfsRoutes.forEach((gtfsRoute) => {
+  for (const gtfsRoute of gtfsRoutes) {
     routesGtfsMap[gtfsRoute.routeId] = gtfsRoute;
-  });
+  };
 
-  // Sometimes alerts have their routes vanish from the schedule. We don't want to display those alerts, so filter
-  // them out. Alerts are prototyped, so blank route ids end up being empty strings. So we will end up filtering
-  // out agency wide alerts without that second conditional.
-  gtfsEntities = gtfsEntities.filter((gtfsEntity) => {
+  return gtfsEntities.filter((gtfsEntity) => {
+    // Sometimes alerts have their routes vanish from the schedule. We don't want to display those alerts, so filter
+    // them out. Alerts are prototyped, so blank route ids end up being empty strings. So we will end up filtering
+    // out agency wide alerts without that second conditional.
     return (
       gtfsEntity.alert.informedEntity.some((entity) => entity.routeId in routesGtfsMap) ||
       gtfsEntity.alert.informedEntity.every((entity) => entity.agencyId && entity.routeId === "")
     );
-  });
-
-  return gtfsEntities.map((gtfsEntity) => {
+  // oxlint-disable-next-line oxc/no-map-spread
+  }).map((gtfsEntity) => {
     const routeIds = [
       ...new Set(
         gtfsEntity.alert.informedEntity
           .map((entity) => entity.routeId)
-          .filter((routeId) => routeId),
+          .filter(Boolean),
       ),
     ];
     return {
       ...gtfsEntity,
       alert: {
         ...gtfsEntity.alert,
-        informedEntity: routeIds.map((routeId) => routesGtfsMap[routeId]).filter((route) => route),
+        informedEntity: routeIds.map((routeId) => routesGtfsMap[routeId]).filter(Boolean),
       },
     };
   });
 }
 
 function filterGtfs(gtfsEntities, routeFilter) {
-  gtfsEntities = gtfsEntities.filter((gtfsEntity) => {
+  return gtfsEntities.filter((gtfsEntity) => {
     if (routeFilter === null) return true;
     if (gtfsEntity.alert.informedEntity.length === 0) return true;
 
     return gtfsEntity.alert.informedEntity.some((route) =>
       routeFilter.includes(route.routeShortName),
     );
-  });
-
-  // filter individual routes
-  return gtfsEntities.map((gtfsEntity) => {
+  // oxlint-disable-next-line oxc/no-map-spread
+  }).map((gtfsEntity) => {
+    // filter individual routes
     return {
       ...gtfsEntity,
       alert: {
@@ -69,23 +67,21 @@ function filterGtfs(gtfsEntities, routeFilter) {
 }
 
 function sortGtfs(gtfsEntities) {
-  // sort individual routes
-  gtfsEntities = gtfsEntities.map((gtfsEntity) => {
+  return gtfsEntities.map((gtfsEntity) => {
+    // sort individual routes
     return {
       ...gtfsEntity,
       alert: {
         ...gtfsEntity.alert,
         informedEntity: gtfsEntity.alert.informedEntity.toSorted((route1, route2) => {
-          const sortOrder1 = route1.routeSortOrder ? Number.parseInt(route1.routeSortOrder) : Infinity;
-          const sortOrder2 = route2.routeSortOrder ? Number.parseInt(route2.routeSortOrder) : Infinity;
+          const sortOrder1 = route1.routeSortOrder ? Number.parseInt(route1.routeSortOrder, 10) : Infinity;
+          const sortOrder2 = route2.routeSortOrder ? Number.parseInt(route2.routeSortOrder, 10) : Infinity;
           return sortOrder1 - sortOrder2;
         }),
       },
     };
-  });
-
-  // sort by lowest route sort order
-  return gtfsEntities.toSorted((alert1, alert2) => {
+  }).toSorted((alert1, alert2) => {
+    // sort by lowest route sort order
     const routeSortOrders1 = alert1.alert.informedEntity.map((route) => route.routeSortOrder);
     const routeSortOrders2 = alert2.alert.informedEntity.map((route) => route.routeSortOrder);
     const sortOrder1 = routeSortOrders1.length > 0 ? Math.min(...routeSortOrders1) : -Infinity;

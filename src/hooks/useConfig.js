@@ -1,10 +1,10 @@
-import { useMemo } from 'react'
+import { useMemo } from "react";
 
 /**
  * @typedef ConfigObject
  * @property {URL|null} gtfsScheduleRoutesUrl - a URL pointing to a remote gtfs feed routes.txt file.
  * @property {URL|null} gtfsRealtimeAlertsUrl - a URL pointing to a remote gtfs realtime alerts feed.
- * @property {[String]|null} routes - a list of route abbreviations to be used as a whitelist.
+ * @property {[String]|null} routesFilter - a list of route abbreviations to be used as a whitelist.
  */
 
 /**
@@ -14,9 +14,9 @@ import { useMemo } from 'react'
  * - `gtfsScheduleRoutesUrl` will be `null` if a parsing error occurs or no url is passed.
  * - `gtfsRealtimeAlertsUrl` optionally parses a fully qualified url in the search params.
  * - `gtfsRealtimeAlertsUrl` will be `null` if a parsing error occurs or no url is passed.
- * - `routes` optionally parses a comma-separated list of route abbreviations in the search params.
- * - `routes` will have blank values filtered out.
- * - `routes` will default to `null` if no option is provided.
+ * - `routesFilter` optionally parses a comma-separated list of route abbreviations in the search params.
+ * - `routesFilter` will have blank values filtered out.
+ * - `routesFilter` will default to `null` if no option is provided.
  *
  * @example
  * // https://example.com/?gtfsScheduleRoutesUrl=https://example.com/gtfs/schedule/routes&gtfsRealtimeAlertsUrl=https://example.com/gtfs/alerts/v2&routes=A1,B2
@@ -24,23 +24,27 @@ import { useMemo } from 'react'
  *
  * @example
  * // https://example.com/?gtfsSchduleUrl=badurl&routes=
- * // results in {gtfsScheduleRoutesUrl: null, gtfsRealtimeAlertsUrl: null, routes: []}
+ * // results in {gtfsScheduleRoutesUrl: null, gtfsRealtimeAlertsUrl: null, routesFilter: []}
  *
  * @return {ConfigObject}
  */
-export default function useConfig () {
+export default function useConfig() {
   return useMemo(() => {
-    const searchParams = new URLSearchParams(location.search)
+    const searchParams = new URLSearchParams(location.search);
     return {
-      gtfsScheduleRoutesUrl: parseUrl(searchParams.get('gtfsScheduleCsvUrl')) || DEFAULT_GTFS_ROUTE_URL,
-      gtfsRealtimeAlertsUrl: parseUrl(searchParams.get('gtfsRealtimeAlertsUrl')) || DEFAULT_GTFS_REALTIME_ALERTS_URL,
-      routes: parseRoutes(searchParams.get('routes')),
-    }
-  }, [])
+      gtfsScheduleRoutesUrl:
+        parseUrl(searchParams.get("gtfsScheduleCsvUrl")) || DEFAULT_GTFS_ROUTE_URL,
+      gtfsRealtimeAlertsUrl:
+        parseUrl(searchParams.get("gtfsRealtimeAlertsUrl")) || DEFAULT_GTFS_REALTIME_ALERTS_URL,
+      routesFilter: parseRoutes(searchParams.get("routes")),
+    };
+  }, []);
 }
 
-const DEFAULT_GTFS_ROUTE_URL = new URL('https://gtfs-cache.admin.umass.edu/gtfs/routes')
-const DEFAULT_GTFS_REALTIME_ALERTS_URL = new URL('https://gtfs-cache.admin.umass.edu/gtfs-rt/alerts')
+const DEFAULT_GTFS_ROUTE_URL = new URL("https://gtfs-cache.admin.umass.edu/gtfs/routes");
+const DEFAULT_GTFS_REALTIME_ALERTS_URL = new URL(
+  "https://gtfs-cache.admin.umass.edu/gtfs-rt/alerts",
+);
 
 /**
  * Parses a URL, returning null if a parsing error occurs.
@@ -49,11 +53,11 @@ const DEFAULT_GTFS_REALTIME_ALERTS_URL = new URL('https://gtfs-cache.admin.umass
  * @return {URL|null} the parsed URL.
  * @see {useConfig}
  */
-function parseUrl (arg) {
+function parseUrl(arg) {
   try {
-    return new URL(arg)
+    return new URL(arg);
   } catch {
-    return null
+    return null;
   }
 }
 
@@ -64,6 +68,6 @@ function parseUrl (arg) {
  * @return {[String]|null} - the parsed list of routes.
  * @see {useConfig}
  */
-function parseRoutes (arg) {
-  return arg?.split(',')?.filter((route) => !!(route)) || null
+function parseRoutes(arg) {
+  return arg?.split(",")?.filter((route) => !!route) || null;
 }

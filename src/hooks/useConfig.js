@@ -1,4 +1,4 @@
-import { useMemo } from 'react'
+import { useMemo } from "react";
 
 /**
  * @typedef ConfigObject
@@ -28,19 +28,23 @@ import { useMemo } from 'react'
  *
  * @return {ConfigObject}
  */
-export default function useConfig () {
+export default function useConfig() {
   return useMemo(() => {
-    const searchParams = new URLSearchParams(location.search)
+    const searchParams = new URLSearchParams(location.search);
     return {
-      gtfsScheduleRoutesUrl: parseUrl(searchParams.get('gtfsScheduleCsvUrl')) || DEFAULT_GTFS_ROUTE_URL,
-      gtfsRealtimeAlertsUrl: parseUrl(searchParams.get('gtfsRealtimeAlertsUrl')) || DEFAULT_GTFS_REALTIME_ALERTS_URL,
-      routes: parseRoutes(searchParams.get('routes')),
-    }
-  }, [])
+      gtfsScheduleRoutesUrl:
+        parseUrl(searchParams.get("gtfsScheduleCsvUrl")) || DEFAULT_GTFS_ROUTE_URL,
+      gtfsRealtimeAlertsUrl:
+        parseUrl(searchParams.get("gtfsRealtimeAlertsUrl")) || DEFAULT_GTFS_REALTIME_ALERTS_URL,
+      routes: parseRoutes(searchParams.get("routes")),
+    };
+  }, []);
 }
 
-const DEFAULT_GTFS_ROUTE_URL = new URL('https://gtfs-cache.admin.umass.edu/gtfs/routes')
-const DEFAULT_GTFS_REALTIME_ALERTS_URL = new URL('https://gtfs-cache.admin.umass.edu/gtfs-rt/alerts')
+const DEFAULT_GTFS_ROUTE_URL = new URL("https://gtfs-cache.admin.umass.edu/gtfs/routes");
+const DEFAULT_GTFS_REALTIME_ALERTS_URL = new URL(
+  "https://gtfs-cache.admin.umass.edu/gtfs-rt/alerts",
+);
 
 /**
  * Parses a URL, returning null if a parsing error occurs.
@@ -49,11 +53,11 @@ const DEFAULT_GTFS_REALTIME_ALERTS_URL = new URL('https://gtfs-cache.admin.umass
  * @return {URL|null} the parsed URL.
  * @see {useConfig}
  */
-function parseUrl (arg) {
+function parseUrl(arg) {
   try {
-    return new URL(arg)
+    return new URL(arg);
   } catch {
-    return null
+    return null;
   }
 }
 
@@ -64,6 +68,6 @@ function parseUrl (arg) {
  * @return {[String]|null} - the parsed list of routes.
  * @see {useConfig}
  */
-function parseRoutes (arg) {
-  return arg?.split(',')?.filter((route) => !!(route)) || null
+function parseRoutes(arg) {
+  return arg?.split(",")?.filter((route) => !!route) || null;
 }

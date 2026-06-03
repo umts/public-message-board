@@ -1,5 +1,5 @@
-import DOMPurify from 'dompurify'
-import classNames from './PublicMessage.module.css'
+import DOMPurify from "dompurify";
+import classNames from "./PublicMessage.module.css";
 
 /**
  * Component that displays a message within a {@link PublicMessageBoard}.
@@ -9,18 +9,18 @@ import classNames from './PublicMessage.module.css'
  * @param {Array|undefined} routes - list of routes affected. Left undefined if message is an error
  * @return {JSX.Element}
  */
-export default function PublicMessage ({ routes, header, description }) {
+export default function PublicMessage({ routes, header, description }) {
   return (
     <tr>
-      {(routes) && (
-        <th scope='row'>
+      {routes && (
+        <th scope="row">
           {routes.map((route) => (
             <div
               key={route.id}
-              className={classNames['route-abbreviation']}
+              className={classNames["route-abbreviation"]}
               style={{
-                backgroundColor: !(route.color) ? undefined : `#${route.color}`,
-                color: !(route.textColor) ? undefined : `#${route.textColor}`,
+                backgroundColor: !route.color ? undefined : `#${route.color}`,
+                color: !route.textColor ? undefined : `#${route.textColor}`,
               }}
             >
               {route.abbreviation}
@@ -28,10 +28,10 @@ export default function PublicMessage ({ routes, header, description }) {
           ))}
         </th>
       )}
-      <td colSpan={(routes) ? 1 : 2}>
-        {(header) && (<div className={classNames['header']}>{header}</div>)}
+      <td colSpan={routes ? 1 : 2}>
+        {header && <div className={classNames["header"]}>{header}</div>}
         <div dangerouslySetInnerHTML={{ __html: DOMPurify.sanitize(description) }} />
       </td>
     </tr>
-  )
+  );
 }

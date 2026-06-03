@@ -23,8 +23,12 @@
     "vite": "*"
   },
   "devDependencies": {
+    "@vitest/browser-playwright": "*",
+    "@vitest/coverage-istanbul": "*",
+    "@vitest/ui": "*",
     "oxfmt": "*",
     "oxlint": "*",
+    "playwright": "*",
     "stylelint": "*",
     "stylelint-config-standard": "*",
     "vitest": "*",

@@ -15,9 +15,9 @@ import { useEffect } from "react";
 export default function useDynamicHeight() {
   return useEffect(() => {
     const resizeObserver = new ResizeObserver((entries) => {
-      entries.forEach((entry) => {
+      for (const entry of entries) {
         top.postMessage({ height: entry.contentRect.height }, "*");
-      });
+      };
     });
     resizeObserver.observe(document.body);
     return () => resizeObserver.disconnect();

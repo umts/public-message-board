@@ -1,5 +1,7 @@
 import DOMPurify from "dompurify";
+import {useMemo} from 'react'
 import classNames from "./PublicMessage.module.css";
+import RouteAbbreviation from "./RouteAbbreviation.jsx";
 
 /**
  * Component that displays a message within a {@link PublicMessageBoard}.
@@ -10,27 +12,20 @@ import classNames from "./PublicMessage.module.css";
  * @return {JSX.Element}
  */
 export default function PublicMessage({ routes, header, description }) {
+  const sanitizedDescriptionHTML = useMemo(() => ({ __html: DOMPurify.sanitize(description) }), [description])
   return (
     <tr>
       {routes && (
         <th scope="row">
           {routes.map((route) => (
-            <div
-              key={route.id}
-              className={classNames["route-abbreviation"]}
-              style={{
-                backgroundColor: !route.color ? undefined : `#${route.color}`,
-                color: !route.textColor ? undefined : `#${route.textColor}`,
-              }}
-            >
-              {route.abbreviation}
-            </div>
+            <RouteAbbreviation key={route.id} route={route} />
           ))}
         </th>
       )}
       <td colSpan={routes ? 1 : 2}>
         {header && <div className={classNames["header"]}>{header}</div>}
-        <div dangerouslySetInnerHTML={{ __html: DOMPurify.sanitize(description) }} />
+        { /* oxlint-disable-next-line react/no-danger */ }
+        <div dangerouslySetInnerHTML={sanitizedDescriptionHTML} />
       </td>
     </tr>
   );

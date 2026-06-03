@@ -21,27 +21,25 @@ export default function App() {
   const fetchGtfsRealtime = useFetchResolver(gtfsRealtimeAlertsUrl);
   const gtfsRealtimeAlerts = useGtfsRealtime(fetchGtfsRealtime, 30 * 1000);
 
-  const publicMessages = publicMessagesFromGtfs(gtfsRoutes, gtfsRealtimeAlerts?.entity, routesFilter);
+  const publicMessages = publicMessagesFromGtfs(
+    gtfsRoutes,
+    gtfsRealtimeAlerts?.entity,
+    routesFilter,
+  );
 
   return (
     <PublicMessageBoard>
-      {publicMessages === undefined ? (
-        null
-      ) : publicMessages === null ? (
+      {publicMessages === undefined ? null : publicMessages === null ? (
         <PublicMessage message="Failed to load message information." />
       ) : publicMessages.length === 0 ? (
         <PublicMessage message="There are no detours currently in effect." />
       ) : (
         publicMessages.map(({ id, routes, ...message }) => (
-          <PublicMessage
-            key={id}
-            routes={routes.length > 0 ? routes : allRoutes}
-            {...message}
-          />
+          <PublicMessage key={id} routes={routes.length > 0 ? routes : allRoutes} {...message} />
         ))
       )}
     </PublicMessageBoard>
   );
 }
 
-const allRoutes = [{ id: 'all', abbreviation: "ALL" }];
+const allRoutes = [{ id: "all", abbreviation: "ALL" }];

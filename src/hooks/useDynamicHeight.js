@@ -17,7 +17,7 @@ export default function useDynamicHeight() {
     const resizeObserver = new ResizeObserver((entries) => {
       for (const entry of entries) {
         top.postMessage({ height: entry.contentRect.height }, "*");
-      };
+      }
     });
     resizeObserver.observe(document.body);
     return () => resizeObserver.disconnect();

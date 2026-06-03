@@ -1,5 +1,5 @@
 import DOMPurify from "dompurify";
-import {useMemo} from 'react'
+import { useMemo } from "react";
 import classNames from "./PublicMessage.module.css";
 import RouteAbbreviation from "./RouteAbbreviation.jsx";
 
@@ -12,7 +12,10 @@ import RouteAbbreviation from "./RouteAbbreviation.jsx";
  * @return {JSX.Element}
  */
 export default function PublicMessage({ routes, header, description }) {
-  const sanitizedDescriptionHTML = useMemo(() => ({ __html: DOMPurify.sanitize(description) }), [description])
+  const sanitizedDescriptionHTML = useMemo(
+    () => ({ __html: DOMPurify.sanitize(description) }),
+    [description],
+  );
   return (
     <tr>
       {routes && (
@@ -24,7 +27,7 @@ export default function PublicMessage({ routes, header, description }) {
       )}
       <td colSpan={routes ? 1 : 2}>
         {header && <div className={classNames["header"]}>{header}</div>}
-        { /* oxlint-disable-next-line react/no-danger */ }
+        {/* oxlint-disable-next-line react/no-danger */}
         <div dangerouslySetInnerHTML={sanitizedDescriptionHTML} />
       </td>
     </tr>

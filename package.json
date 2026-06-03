@@ -6,7 +6,9 @@
   "scripts": {
     "build": "vite build",
     "dev": "vite",
-    "lint": "eslint",
+    "fmt": "oxfmt",
+    "fmt:check": "oxfmt --check",
+    "lint": "oxlint",
     "lint:css": "stylelint **/*.css **/*.module.css",
     "preview": "vite preview"
   },
@@ -20,8 +22,8 @@
     "vite": "*"
   },
   "devDependencies": {
-    "eslint": "*",
-    "neostandard": "*",
+    "oxfmt": "*",
+    "oxlint": "*",
     "stylelint": "*",
     "stylelint-config-standard": "*"
   }

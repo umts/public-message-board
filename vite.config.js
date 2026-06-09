@@ -1,22 +1,22 @@
 import react from "@vitejs/plugin-react";
-import { playwright } from '@vitest/browser-playwright'
+import { playwright } from "@vitest/browser-playwright";
 import { defineConfig } from "vite";
 
 export default defineConfig({
   plugins: [react()],
   test: {
-    setupFiles: ['./test/setup.js'],
+    setupFiles: ["./test/setup.js"],
     browser: {
       enabled: true,
-      provider: playwright({ contextOptions: { timezoneId: 'UTC' } }),
+      provider: playwright({ contextOptions: { timezoneId: "UTC" } }),
       headless: true,
-      instances: [{ browser: 'chromium' }, { browser: 'firefox' }, { browser: 'webkit' }],
+      instances: [{ browser: "chromium" }, { browser: "firefox" }, { browser: "webkit" }],
     },
     coverage: {
       enabled: true,
-      provider: 'istanbul',
-      include: ['src/**/*.js', 'src/**/*.jsx'],
-      exclude: ['src/index.jsx', 'src/hooks/**'],
+      provider: "istanbul",
+      include: ["src/**/*.js", "src/**/*.jsx"],
+      exclude: ["src/index.jsx", "src/hooks/**"],
       thresholds: {
         100: true,
       },

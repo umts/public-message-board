@@ -1,7 +1,7 @@
-import { describe, expect, it, vi } from 'vitest';
-import { page } from 'vitest/browser';
-import 'vitest-browser-react';
-import App from '../src/App.jsx';
+import { describe, expect, it, vi } from "vitest";
+import { page } from "vitest/browser";
+import "vitest-browser-react";
+import App from "../src/App.jsx";
 
 const gtfsReactHooksMocks = vi.hoisted(() => ({
   useGtfsRealtime: vi.fn((data) => data),
@@ -16,7 +16,7 @@ const helpers = vi.hoisted(() => ({
 }));
 
 vi.mock("../src/hooks/useScheduleRouteResolver.js", () => ({
-  default: helpers.useScheduleRouteResolver, 
+  default: helpers.useScheduleRouteResolver,
 }));
 
 vi.mock("../src/hooks/useRealtimeAlertsResolver.js", () => ({
@@ -33,24 +33,24 @@ vi.mock("gtfs-react-hooks", () => ({
   useFetchResolver: gtfsReactHooksMocks.useFetchResolver,
 }));
 
-function mockGtfs ({ schedule, alerts }) {
+function mockGtfs({ schedule, alerts }) {
   helpers.useScheduleRouteResolver.mockReturnValue(schedule);
   helpers.useRealtimeAlertsResolver.mockReturnValue(alerts);
 }
 
-describe('App', () => {
-  it('renders nothing when no route has been configured', async () => {
+describe("App", () => {
+  it("renders nothing when no route has been configured", async () => {
     helpers.useConfig.mockReturnValue({
       gtfsScheduleRoutesUrl: "",
       gtfsRealtimeAlertsUrl: "",
       routesFilter: null,
     });
 
-    await page.render(<App />)
-    expect(true).toBeTruthy()
-  })
+    await page.render(<App />);
+    expect(true).toBeTruthy();
+  });
 
-  it('renders an informing sentence when everything is null', async () => {
+  it("renders an informing sentence when everything is null", async () => {
     helpers.useConfig.mockReturnValue({
       gtfsScheduleRoutesUrl: "",
       gtfsRealtimeAlertsUrl: "",
@@ -63,9 +63,9 @@ describe('App', () => {
 
     await page.render(<App />);
     expect(document.body).toHaveTextContent("Failed to load message information.");
-  })
+  });
 
-  it('renders an informing sentence when no detours', async () => {
+  it("renders an informing sentence when no detours", async () => {
     helpers.useConfig.mockReturnValue({
       gtfsScheduleRoutesUrl: "",
       gtfsRealtimeAlertsUrl: "",
@@ -78,7 +78,7 @@ describe('App', () => {
 
     await page.render(<App />);
     expect(document.body).toHaveTextContent("There are no detours currently in effect.");
-  })
+  });
 
   it("renders detours for all routes when no entity provided", async () => {
     helpers.useConfig.mockReturnValue({
@@ -87,7 +87,14 @@ describe('App', () => {
       routesFilter: ["MR"],
     });
     mockGtfs({
-      schedule: [{ routeId: "MY_ROUTE", routeShortName: "MR", routeColor: "111111", routeTextColor: 'e7d8d4' } ],
+      schedule: [
+        {
+          routeId: "MY_ROUTE",
+          routeShortName: "MR",
+          routeColor: "111111",
+          routeTextColor: "e7d8d4",
+        },
+      ],
       alerts: {
         entity: [
           {
@@ -113,14 +120,19 @@ describe('App', () => {
       routesFilter: null,
     });
     mockGtfs({
-      schedule: [{ routeId: "MY_ROUTE", routeShortName: "MR", routeColor: "111111", routeTextColor: 'e7d8d4' } ],
+      schedule: [
+        {
+          routeId: "MY_ROUTE",
+          routeShortName: "MR",
+          routeColor: "111111",
+          routeTextColor: "e7d8d4",
+        },
+      ],
       alerts: {
         entity: [
           {
             alert: {
-              informedEntity: [
-                { routeId: "MY_ROUTE" },
-              ],
+              informedEntity: [{ routeId: "MY_ROUTE" }],
               headerText: { translation: [{ text: "My header" }] },
               descriptionText: { translation: [{ text: "My description" }] },
             },
@@ -147,7 +159,7 @@ describe('App', () => {
       routesFilter: null,
     });
     mockGtfs({
-      schedule: [{ routeId: "MY_ROUTE", routeShortName: "MR", routeColor: "111111" } ],
+      schedule: [{ routeId: "MY_ROUTE", routeShortName: "MR", routeColor: "111111" }],
       alerts: {
         entity: [
           {
@@ -198,10 +210,10 @@ describe('App', () => {
       },
     });
 
-  await page.render(<App />);
-  const detourBodies = page.getByRole("cell").all();
-  expect(detourBodies[0]).toHaveTextContent("Other header");
-  expect(detourBodies[1]).toHaveTextContent("My header");
+    await page.render(<App />);
+    const detourBodies = page.getByRole("cell").all();
+    expect(detourBodies[0]).toHaveTextContent("Other header");
+    expect(detourBodies[1]).toHaveTextContent("My header");
   });
 
   it("renders the detours in alphabetical order when no sort order", async () => {
@@ -235,10 +247,10 @@ describe('App', () => {
       },
     });
 
-  await page.render(<App />);
-  const detourBodies = page.getByRole("cell").all();
-  expect(detourBodies[0]).toHaveTextContent("My header");
-  expect(detourBodies[1]).toHaveTextContent("Other header");
+    await page.render(<App />);
+    const detourBodies = page.getByRole("cell").all();
+    expect(detourBodies[0]).toHaveTextContent("My header");
+    expect(detourBodies[1]).toHaveTextContent("Other header");
   });
 
   it("renders route short names in order if provided", async () => {
@@ -256,8 +268,7 @@ describe('App', () => {
         entity: [
           {
             alert: {
-              informedEntity: [{ routeId: "MY_ROUTE" },
-                               { routeId: "OTHER_ROUTE" }],
+              informedEntity: [{ routeId: "MY_ROUTE" }, { routeId: "OTHER_ROUTE" }],
               headerText: { translation: [{ text: "My header" }] },
               descriptionText: { translation: [{ text: "My description" }] },
             },
@@ -287,8 +298,7 @@ describe('App', () => {
         entity: [
           {
             alert: {
-              informedEntity: [{ routeId: "MY_ROUTE" },
-                               { routeId: "OTHER_ROUTE" }],
+              informedEntity: [{ routeId: "MY_ROUTE" }, { routeId: "OTHER_ROUTE" }],
               headerText: { translation: [{ text: "My header" }] },
               descriptionText: { translation: [{ text: "My description" }] },
             },
@@ -338,4 +348,4 @@ describe('App', () => {
     const detourBodies = page.getByRole("cell").all();
     expect(detourBodies[0]).toHaveTextContent("My header");
   });
-})
+});

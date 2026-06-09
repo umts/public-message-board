@@ -96,8 +96,12 @@ function sortGtfs(gtfsEntities) {
     })
     .toSorted((alert1, alert2) => {
       // sort by lowest route sort order
-      const routeSortOrders1 = alert1.alert.informedEntity.map((route) => route.routeSortOrder).filter(v => v !== undefined);
-      const routeSortOrders2 = alert2.alert.informedEntity.map((route) => route.routeSortOrder).filter(v => v !== undefined);
+      const routeSortOrders1 = alert1.alert.informedEntity
+        .map((route) => route.routeSortOrder)
+        .filter((v) => v !== undefined);
+      const routeSortOrders2 = alert2.alert.informedEntity
+        .map((route) => route.routeSortOrder)
+        .filter((v) => v !== undefined);
       const sortOrder1 = routeSortOrders1.length > 0 ? Math.min(...routeSortOrders1) : -Infinity;
       const sortOrder2 = routeSortOrders2.length > 0 ? Math.min(...routeSortOrders2) : -Infinity;
       return sortOrder1 - sortOrder2;

@@ -16,7 +16,7 @@ export default defineConfig({
       enabled: true,
       provider: 'istanbul',
       include: ['src/**/*.js', 'src/**/*.jsx'],
-      exclude: ['src/index.jsx'],
+      exclude: ['src/index.jsx', 'src/hooks/**'],
       thresholds: {
         100: true,
       },

@@ -17,8 +17,8 @@ export default function RouteAbbreviation({ route }) {
   );
 
   return (
-    <div className={classNames["route-abbreviation"]} style={colors}>
+    <article className={classNames["route-abbreviation"]} style={colors}>
       {route.abbreviation}
-    </div>
+    </article>
   );
 }

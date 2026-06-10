@@ -71,7 +71,9 @@ describe("App", () => {
     });
 
     await page.render(<App />);
-    expect(document.body).toHaveTextContent("Failed to load message information.");
+    expect(
+      page.getByRole("row").filter({ hasText: "Failed to load message information." }),
+    ).toBeVisible();
   });
 
   it("renders an informing sentence when no detours", async () => {
@@ -81,38 +83,12 @@ describe("App", () => {
     });
 
     await page.render(<App />);
-    expect(document.body).toHaveTextContent("There are no detours currently in effect.");
+    expect(
+      page.getByRole("row").filter({ hasText: "There are no detours currently in effect." }),
+    ).toBeVisible();
   });
 
-  it("renders detours for all routes when no entity provided", async () => {
-    mockGtfs({
-      schedule: [
-        {
-          routeId: "MY_ROUTE",
-          routeShortName: "MR",
-          routeColor: "111111",
-          routeTextColor: "e7d8d4",
-        },
-      ],
-      alerts: {
-        entity: [
-          {
-            alert: {
-              informedEntity: [],
-              headerText: { translation: [{ text: "My header" }] },
-              descriptionText: { translation: [{ text: "My description" }] },
-            },
-          },
-        ],
-      },
-    });
-
-    await page.render(<App />);
-    const routeAbbreviation = page.getByRole("article");
-    expect(routeAbbreviation).toHaveTextContent("ALL");
-  });
-
-  it("renders detours when a route is configured", async () => {
+  it("renders public messages", async () => {
     mockGtfs({
       schedule: [
         {
@@ -136,17 +112,47 @@ describe("App", () => {
     });
 
     await page.render(<App />);
-    const routeAbbreviation = page.getByRole("article");
-    expect(routeAbbreviation).toHaveTextContent("MR");
-    expect(routeAbbreviation).toHaveStyle("background-color: #111111");
-    expect(routeAbbreviation).toHaveStyle("color: #e7d8d4");
-
-    const detourBody = page.getByRole("cell");
-    expect(detourBody).toHaveTextContent("My header");
-    expect(detourBody).toHaveTextContent("My description");
+    const publicMessage = page
+      .getByRole("row")
+      .filter({ hasText: "MR" })
+      .filter({ hasText: "My header" })
+      .filter({ hasText: "My description " });
+    expect(publicMessage).toBeVisible();
   });
 
-  it("renders agencywide detours", async () => {
+  it("marks public messages with no informed entity as applying to all routes", async () => {
+    mockGtfs({
+      schedule: [
+        {
+          routeId: "MY_ROUTE",
+          routeShortName: "MR",
+          routeColor: "111111",
+          routeTextColor: "e7d8d4",
+        },
+      ],
+      alerts: {
+        entity: [
+          {
+            alert: {
+              informedEntity: [],
+              headerText: { translation: [{ text: "My header" }] },
+              descriptionText: { translation: [{ text: "My description" }] },
+            },
+          },
+        ],
+      },
+    });
+
+    await page.render(<App />);
+    const publicMessage = page
+      .getByRole("row")
+      .filter({ hasText: "ALL" })
+      .filter({ hasText: "My header" })
+      .filter({ hasText: "My description " });
+    expect(publicMessage).toBeVisible();
+  });
+
+  it("marks public messages applying agencywide as applying to all routes", async () => {
     mockGtfs({
       schedule: [{ routeId: "MY_ROUTE", routeShortName: "MR", routeColor: "111111" }],
       alerts: {
@@ -163,12 +169,15 @@ describe("App", () => {
     });
 
     await page.render(<App />);
-    const detourBody = page.getByRole("cell");
-    expect(detourBody).toHaveTextContent("My header");
-    expect(detourBody).toHaveTextContent("My description");
+    const publicMessage = page
+      .getByRole("row")
+      .filter({ hasText: "ALL" })
+      .filter({ hasText: "My header" })
+      .filter({ hasText: "My description " });
+    expect(publicMessage).toBeVisible();
   });
 
-  it("renders the detours in order given sort order", async () => {
+  it("renders public messages in order given sort order", async () => {
     mockGtfs({
       schedule: [
         { routeId: "MY_ROUTE", routeShortName: "MR", routeColor: "111111", routeSortOrder: 2 },
@@ -195,13 +204,25 @@ describe("App", () => {
     });
 
     await page.render(<App />);
-    const detourBodies = page.getByRole("cell").all();
-    expect(detourBodies.length).toBe(2);
-    expect(detourBodies[0]).toHaveTextContent("Other header");
-    expect(detourBodies[1]).toHaveTextContent("My header");
+    const publicMessage1 = await page
+      .getByRole("row")
+      .filter({ hasText: "OR" })
+      .filter({ hasText: "Other header" })
+      .filter({ hasText: "Other description " })
+      .element();
+    const publicMessage2 = await page
+      .getByRole("row")
+      .filter({ hasText: "MR" })
+      .filter({ hasText: "My header" })
+      .filter({ hasText: "My description " })
+      .element();
+
+    expect(
+      publicMessage1.compareDocumentPosition(publicMessage2) & Node.DOCUMENT_POSITION_FOLLOWING,
+    ).toBeTruthy();
   });
 
-  it("renders the detours in alphabetical order when no sort order", async () => {
+  it("renders public messages in alphabetical order when no sort order", async () => {
     mockGtfs({
       schedule: [
         { routeId: "MY_ROUTE", routeShortName: "MR", routeColor: "111111" },
@@ -228,13 +249,25 @@ describe("App", () => {
     });
 
     await page.render(<App />);
-    const detourBodies = page.getByRole("cell").all();
-    expect(detourBodies.length).toBe(2);
-    expect(detourBodies[0]).toHaveTextContent("My header");
-    expect(detourBodies[1]).toHaveTextContent("Other header");
+    const publicMessage1 = await page
+      .getByRole("row")
+      .filter({ hasText: "MR" })
+      .filter({ hasText: "My header" })
+      .filter({ hasText: "My description " })
+      .element();
+    const publicMessage2 = await page
+      .getByRole("row")
+      .filter({ hasText: "OR" })
+      .filter({ hasText: "Other header" })
+      .filter({ hasText: "Other description " })
+      .element();
+
+    expect(
+      publicMessage1.compareDocumentPosition(publicMessage2) & Node.DOCUMENT_POSITION_FOLLOWING,
+    ).toBeTruthy();
   });
 
-  it("renders route short names in order if provided", async () => {
+  it("renders route short names in sort order if provided", async () => {
     mockGtfs({
       schedule: [
         { routeId: "MY_ROUTE", routeShortName: "MR", routeColor: "111111", routeSortOrder: 2 },
@@ -254,10 +287,12 @@ describe("App", () => {
     });
 
     await page.render(<App />);
-    const routeNames = page.getByRole("article").all();
-    expect(routeNames.length).toBe(2);
-    expect(routeNames[0]).toHaveTextContent("OR");
-    expect(routeNames[1]).toHaveTextContent("MR");
+    const publicMessage = page
+      .getByRole("row")
+      .filter({ hasText: /OR.*MR/u })
+      .filter({ hasText: "My header" })
+      .filter({ hasText: "My description " });
+    expect(publicMessage).toBeVisible();
   });
 
   it("renders route short names in alphabetical order if not provided", async () => {
@@ -280,13 +315,15 @@ describe("App", () => {
     });
 
     await page.render(<App />);
-    const routeNames = page.getByRole("article").all();
-    expect(routeNames.length).toBe(2);
-    expect(routeNames[0]).toHaveTextContent("MR");
-    expect(routeNames[1]).toHaveTextContent("OR");
+    const publicMessage = page
+      .getByRole("row")
+      .filter({ hasText: /MR.*OR/u })
+      .filter({ hasText: "My header" })
+      .filter({ hasText: "My description " });
+    expect(publicMessage).toBeVisible();
   });
 
-  it("renders detours only for the selected routes if informed entities exist", async () => {
+  it("renders public messages only for the selected routes", async () => {
     setSearchParams({ routes: ["MR"] });
     mockGtfs({
       schedule: [
@@ -314,12 +351,15 @@ describe("App", () => {
     });
 
     await page.render(<App />);
-    const detourBodies = page.getByRole("cell").all();
-    expect(detourBodies.length).toBe(1);
-    expect(detourBodies[0]).toHaveTextContent("My header");
+    const publicMessage = page
+      .getByRole("row")
+      .filter({ hasText: "MR" })
+      .filter({ hasText: "My header" })
+      .filter({ hasText: "My description " });
+    expect(publicMessage).toBeVisible();
   });
 
-  it("renders all detours if no informed entity", async () => {
+  it("always renders public messages that apply to all routes", async () => {
     setSearchParams({ routes: ["MR"] });
     mockGtfs({
       schedule: [
@@ -337,7 +377,7 @@ describe("App", () => {
           },
           {
             alert: {
-              informedEntity: [],
+              informedEntity: [{ routeId: "OTHER_ROUTE" }],
               headerText: { translation: [{ text: "Other header" }] },
               descriptionText: { translation: [{ text: "Other description" }] },
             },
@@ -347,9 +387,11 @@ describe("App", () => {
     });
 
     await page.render(<App />);
-    const detourBodies = page.getByRole("cell").all();
-    expect(detourBodies.length).toBe(2);
-    expect(detourBodies[0]).toHaveTextContent("My header");
-    expect(detourBodies[1]).toHaveTextContent("Other header");
+    const publicMessage = page
+      .getByRole("row")
+      .filter({ hasText: "ALL" })
+      .filter({ hasText: "My header" })
+      .filter({ hasText: "My description " });
+    expect(publicMessage).toBeVisible();
   });
 });

@@ -1,5 +1,6 @@
 import { useMemo } from "react";
 import classNames from "./RouteAbbreviation.module.css";
+
 /**
  * Component that displays a colored route abbreviation.
  *
@@ -17,8 +18,8 @@ export default function RouteAbbreviation({ route }) {
   );
 
   return (
-    <article className={classNames["route-abbreviation"]} style={colors}>
+    <div className={classNames["route-abbreviation"]} style={colors}>
       {route.abbreviation}
-    </article>
+    </div>
   );
 }

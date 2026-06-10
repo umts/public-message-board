@@ -1,4 +1,4 @@
-import { describe, expect, it, vi } from "vitest";
+import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
 import { page } from "vitest/browser";
 import "vitest-browser-react";
 import App from "../src/App.jsx";
@@ -12,7 +12,6 @@ const gtfsReactHooksMocks = vi.hoisted(() => ({
 const helpers = vi.hoisted(() => ({
   useScheduleRouteResolver: vi.fn(),
   useRealtimeAlertsResolver: vi.fn(),
-  useConfig: vi.fn(),
 }));
 
 vi.mock("../src/hooks/useScheduleRouteResolver.js", () => ({
@@ -21,10 +20,6 @@ vi.mock("../src/hooks/useScheduleRouteResolver.js", () => ({
 
 vi.mock("../src/hooks/useRealtimeAlertsResolver.js", () => ({
   default: helpers.useRealtimeAlertsResolver,
-}));
-
-vi.mock("../src/hooks/useConfig.js", () => ({
-  default: helpers.useConfig,
 }));
 
 vi.mock("gtfs-react-hooks", () => ({
@@ -38,24 +33,39 @@ function mockGtfs({ schedule, alerts }) {
   helpers.useRealtimeAlertsResolver.mockReturnValue(alerts);
 }
 
-describe("App", () => {
-  it("renders nothing when no route has been configured", async () => {
-    helpers.useConfig.mockReturnValue({
-      gtfsScheduleRoutesUrl: "",
-      gtfsRealtimeAlertsUrl: "",
-      routesFilter: null,
-    });
+function clearSearchParams() {
+  history.replaceState({}, "", location.pathname);
+}
 
+function setSearchParams(options) {
+  const url = new URL(location);
+  const search = new URLSearchParams(url.search);
+  for (const [key, value] of Object.entries(options)) {
+    search.set(key, value);
+  }
+  url.search = search;
+  history.pushState({}, "", url);
+}
+
+describe("App", () => {
+  beforeEach(() => {
+    setSearchParams({
+      gtfsScheduleUrl: "schedule",
+      gtfsRealtimeTripUpdatesUrl: "trip-updates",
+    });
+  });
+
+  afterEach(() => {
+    vi.resetAllMocks();
+    clearSearchParams();
+  });
+
+  it("renders nothing when no route has been configured", async () => {
     await page.render(<App />);
     expect(true).toBeTruthy();
   });
 
   it("renders an informing sentence when everything is null", async () => {
-    helpers.useConfig.mockReturnValue({
-      gtfsScheduleRoutesUrl: "",
-      gtfsRealtimeAlertsUrl: "",
-      routesFilter: null,
-    });
     mockGtfs({
       schedule: null,
       alerts: { entity: null },
@@ -66,11 +76,6 @@ describe("App", () => {
   });
 
   it("renders an informing sentence when no detours", async () => {
-    helpers.useConfig.mockReturnValue({
-      gtfsScheduleRoutesUrl: "",
-      gtfsRealtimeAlertsUrl: "",
-      routesFilter: null,
-    });
     mockGtfs({
       schedule: [],
       alerts: { entity: [] },
@@ -81,11 +86,6 @@ describe("App", () => {
   });
 
   it("renders detours for all routes when no entity provided", async () => {
-    helpers.useConfig.mockReturnValue({
-      gtfsScheduleRoutesUrl: "",
-      gtfsRealtimeAlertsUrl: "",
-      routesFilter: ["MR"],
-    });
     mockGtfs({
       schedule: [
         {
@@ -114,11 +114,6 @@ describe("App", () => {
   });
 
   it("renders detours when a route is configured", async () => {
-    helpers.useConfig.mockReturnValue({
-      gtfsScheduleRoutesUrl: "",
-      gtfsRealtimeAlertsUrl: "",
-      routesFilter: null,
-    });
     mockGtfs({
       schedule: [
         {
@@ -153,11 +148,6 @@ describe("App", () => {
   });
 
   it("renders agencywide detours", async () => {
-    helpers.useConfig.mockReturnValue({
-      gtfsScheduleRoutesUrl: "",
-      gtfsRealtimeAlertsUrl: "",
-      routesFilter: null,
-    });
     mockGtfs({
       schedule: [{ routeId: "MY_ROUTE", routeShortName: "MR", routeColor: "111111" }],
       alerts: {
@@ -180,11 +170,6 @@ describe("App", () => {
   });
 
   it("renders the detours in order given sort order", async () => {
-    helpers.useConfig.mockReturnValue({
-      gtfsScheduleRoutesUrl: "",
-      gtfsRealtimeAlertsUrl: "",
-      routesFilter: null,
-    });
     mockGtfs({
       schedule: [
         { routeId: "MY_ROUTE", routeShortName: "MR", routeColor: "111111", routeSortOrder: 2 },
@@ -212,16 +197,12 @@ describe("App", () => {
 
     await page.render(<App />);
     const detourBodies = page.getByRole("cell").all();
+    expect(detourBodies.length).toBe(2);
     expect(detourBodies[0]).toHaveTextContent("Other header");
     expect(detourBodies[1]).toHaveTextContent("My header");
   });
 
   it("renders the detours in alphabetical order when no sort order", async () => {
-    helpers.useConfig.mockReturnValue({
-      gtfsScheduleRoutesUrl: "",
-      gtfsRealtimeAlertsUrl: "",
-      routesFilter: null,
-    });
     mockGtfs({
       schedule: [
         { routeId: "MY_ROUTE", routeShortName: "MR", routeColor: "111111" },
@@ -249,16 +230,12 @@ describe("App", () => {
 
     await page.render(<App />);
     const detourBodies = page.getByRole("cell").all();
+    expect(detourBodies.length).toBe(2);
     expect(detourBodies[0]).toHaveTextContent("My header");
     expect(detourBodies[1]).toHaveTextContent("Other header");
   });
 
   it("renders route short names in order if provided", async () => {
-    helpers.useConfig.mockReturnValue({
-      gtfsScheduleRoutesUrl: "",
-      gtfsRealtimeAlertsUrl: "",
-      routesFilter: null,
-    });
     mockGtfs({
       schedule: [
         { routeId: "MY_ROUTE", routeShortName: "MR", routeColor: "111111", routeSortOrder: 2 },
@@ -279,16 +256,12 @@ describe("App", () => {
 
     await page.render(<App />);
     const routeNames = page.getByRole("article").all();
+    expect(routeNames.length).toBe(2);
     expect(routeNames[0]).toHaveTextContent("OR");
     expect(routeNames[1]).toHaveTextContent("MR");
   });
 
   it("renders route short names in alphabetical order if not provided", async () => {
-    helpers.useConfig.mockReturnValue({
-      gtfsScheduleRoutesUrl: "",
-      gtfsRealtimeAlertsUrl: "",
-      routesFilter: null,
-    });
     mockGtfs({
       schedule: [
         { routeId: "MY_ROUTE", routeShortName: "MR", routeColor: "111111" },
@@ -309,16 +282,13 @@ describe("App", () => {
 
     await page.render(<App />);
     const routeNames = page.getByRole("article").all();
+    expect(routeNames.length).toBe(2);
     expect(routeNames[0]).toHaveTextContent("MR");
     expect(routeNames[1]).toHaveTextContent("OR");
   });
 
-  it("renders detours only for the selected routes", async () => {
-    helpers.useConfig.mockReturnValue({
-      gtfsScheduleRoutesUrl: "",
-      gtfsRealtimeAlertsUrl: "",
-      routesFilter: ["MR"],
-    });
+  it("renders detours only for the selected routes if informed entities exist", async () => {
+    setSearchParams({ routes: ["MR"] });
     mockGtfs({
       schedule: [
         { routeId: "MY_ROUTE", routeShortName: "MR", routeColor: "111111" },
@@ -346,6 +316,41 @@ describe("App", () => {
 
     await page.render(<App />);
     const detourBodies = page.getByRole("cell").all();
+    expect(detourBodies.length).toBe(1);
     expect(detourBodies[0]).toHaveTextContent("My header");
+  });
+
+  it("renders all detours if no informed entity", async () => {
+    setSearchParams({ routes: ["MR"] });
+    mockGtfs({
+      schedule: [
+        { routeId: "MY_ROUTE", routeShortName: "MR", routeColor: "111111" },
+        { routeId: "OTHER_ROUTE", routeShortName: "OR", routeColor: "111111" },
+      ],
+      alerts: {
+        entity: [
+          {
+            alert: {
+              informedEntity: [],
+              headerText: { translation: [{ text: "My header" }] },
+              descriptionText: { translation: [{ text: "My description" }] },
+            },
+          },
+          {
+            alert: {
+              informedEntity: [],
+              headerText: { translation: [{ text: "Other header" }] },
+              descriptionText: { translation: [{ text: "Other description" }] },
+            },
+          },
+        ],
+      },
+    });
+
+    await page.render(<App />);
+    const detourBodies = page.getByRole("cell").all();
+    expect(detourBodies.length).toBe(2);
+    expect(detourBodies[0]).toHaveTextContent("My header");
+    expect(detourBodies[1]).toHaveTextContent("Other header");
   });
 });

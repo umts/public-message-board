@@ -2,7 +2,8 @@ import PublicMessage from "./components/PublicMessage.jsx";
 import PublicMessageBoard from "./components/PublicMessageBoard.jsx";
 import useConfig from "./hooks/useConfig.js";
 import useDynamicHeight from "./hooks/useDynamicHeight.js";
-import { useFetchResolver, useGtfsRealtime, useGtfsScheduleCsv } from "gtfs-react-hooks";
+import useGtfsScheduleRoutes from "./hooks/useGtfsScheduleRoutes.js";
+import useGtfsRealtimeAlerts from "./hooks/useGtfsRealtimeAlerts.js";
 import publicMessagesFromGtfs from "./utils/publicMessagesFromGtfs.js";
 
 /**
@@ -15,11 +16,8 @@ export default function App() {
   useDynamicHeight();
   const { gtfsScheduleRoutesUrl, gtfsRealtimeAlertsUrl, routesFilter } = useConfig();
 
-  const fetchGtfsRoutes = useFetchResolver(gtfsScheduleRoutesUrl);
-  const gtfsRoutes = useGtfsScheduleCsv(fetchGtfsRoutes, 24 * 60 * 60 * 1000);
-
-  const fetchGtfsRealtime = useFetchResolver(gtfsRealtimeAlertsUrl);
-  const gtfsRealtimeAlerts = useGtfsRealtime(fetchGtfsRealtime, 30 * 1000);
+  const gtfsRoutes = useGtfsScheduleRoutes(gtfsScheduleRoutesUrl);
+  const gtfsRealtimeAlerts = useGtfsRealtimeAlerts(gtfsRealtimeAlertsUrl);
 
   const publicMessages = publicMessagesFromGtfs(
     gtfsRoutes,
@@ -30,9 +28,9 @@ export default function App() {
   return (
     <PublicMessageBoard>
       {publicMessages === undefined ? null : publicMessages === null ? (
-        <PublicMessage message="Failed to load message information." />
+        <PublicMessage description="Failed to load message information." />
       ) : publicMessages.length === 0 ? (
-        <PublicMessage message="There are no detours currently in effect." />
+        <PublicMessage description="There are no detours currently in effect." />
       ) : (
         publicMessages.map(({ id, routes, ...message }) => (
           <PublicMessage key={id} routes={routes.length > 0 ? routes : allRoutes} {...message} />

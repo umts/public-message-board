@@ -10,7 +10,8 @@
     "fmt:check": "oxfmt --check",
     "lint": "oxlint",
     "lint:css": "stylelint **/*.css **/*.module.css",
-    "preview": "vite preview"
+    "preview": "vite preview",
+    "test": "vitest run"
   },
   "dependencies": {
     "@fontsource/open-sans": "*",
@@ -22,9 +23,15 @@
     "vite": "*"
   },
   "devDependencies": {
+    "@vitest/browser-playwright": "*",
+    "@vitest/coverage-istanbul": "*",
+    "@vitest/ui": "*",
     "oxfmt": "*",
     "oxlint": "*",
+    "playwright": "*",
     "stylelint": "*",
-    "stylelint-config-standard": "*"
+    "stylelint-config-standard": "*",
+    "vitest": "*",
+    "vitest-browser-react": "*"
   }
 }

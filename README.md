@@ -55,6 +55,7 @@ npm install # bundle dependencies
 ```sh
 npm run build    # builds a production bundle.
 npm run dev      # starts a local development server.
+npm run fmt      # runs the js formatter.
 npm run lint     # runs the js linter.
 npm run lint:css # runs the css linter.
 npm run preview  # serves a previously built production bundle.

@@ -13,7 +13,7 @@ through url search parameters.
 Configuration options are passed using url search parameters (query strings) as outlined below.
 
 - Required
-  - `?gtfsScheduleUrl=https://example.com/gtfs/schedule` will fetch GTFS Schedule data from the specified URL.
+  - `?gtfsScheduleRoutesUrl=https://example.com/gtfs/schedule/routes` will fetch GTFS Schedule data from the specified URL.
   - `?gtfsRealtimeAlertsUrl=https://example.com/gtfs/alerts/v2` will fetch GTFS Realtime data from the specified URL.
 - Optional
   - `?routes=A1,B2,C3` will provide a list of routes that you want to display messages for. By default, all messages
@@ -22,9 +22,11 @@ Configuration options are passed using url search parameters (query strings) as 
 A fully configured embedding to show messages for the UMass campus shuttle will look like:
 
 ```html
-<iframe src="https://pvta-public-messages.admin.umass.edu/?gtfsScheduleUrl=https://example.com/gtfs/schedule&gtfsRealtimeAlertsUrl=https://example.com/gtfs/alerts/v2&routes=34,35"
-        style="display: block; width: 100%; border: none;"
-        onload="window.addEventListener('message', (e) => { if (new window.URL(e.origin).origin === new window.URL(this.src).origin) { this.height = e.data.height; } });">
+<iframe
+  src="https://pvta-public-messages.admin.umass.edu/?gtfsScheduleRoutesUrl=https://example.com/gtfs/schedule/routes&gtfsRealtimeAlertsUrl=https://example.com/gtfs/alerts/v2&routes=34,35"
+  style="display: block; width: 100%; border: none;"
+  onload="window.addEventListener('message', (e) => { if (new window.URL(e.origin).origin === new window.URL(this.src).origin) { this.height = e.data.height; } });"
+>
 </iframe>
 ```
 
@@ -53,6 +55,7 @@ npm install # bundle dependencies
 ```sh
 npm run build    # builds a production bundle.
 npm run dev      # starts a local development server.
+npm run fmt      # runs the js formatter.
 npm run lint     # runs the js linter.
 npm run lint:css # runs the css linter.
 npm run preview  # serves a previously built production bundle.

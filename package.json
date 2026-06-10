@@ -1,14 +1,17 @@
 {
   "name": "public-message-board",
-  "private": true,
   "version": "0.0.0",
+  "private": true,
   "type": "module",
   "scripts": {
     "build": "vite build",
     "dev": "vite",
-    "lint": "eslint",
+    "fmt": "oxfmt",
+    "fmt:check": "oxfmt --check",
+    "lint": "oxlint",
     "lint:css": "stylelint **/*.css **/*.module.css",
-    "preview": "vite preview"
+    "preview": "vite preview",
+    "test": "vitest run"
   },
   "dependencies": {
     "@fontsource/open-sans": "*",
@@ -20,9 +23,15 @@
     "vite": "*"
   },
   "devDependencies": {
-    "eslint": "*",
-    "neostandard": "*",
+    "@vitest/browser-playwright": "*",
+    "@vitest/coverage-istanbul": "*",
+    "@vitest/ui": "*",
+    "oxfmt": "*",
+    "oxlint": "*",
+    "playwright": "*",
     "stylelint": "*",
-    "stylelint-config-standard": "*"
+    "stylelint-config-standard": "*",
+    "vitest": "*",
+    "vitest-browser-react": "*"
   }
 }

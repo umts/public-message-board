@@ -56,7 +56,6 @@ describe("App", () => {
   });
 
   afterEach(() => {
-    vi.resetAllMocks();
     clearSearchParams();
   });
 

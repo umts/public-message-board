@@ -16,7 +16,11 @@ export default defineConfig({
       enabled: true,
       provider: "istanbul",
       include: ["src/**/*.js", "src/**/*.jsx"],
-      exclude: ["src/index.jsx", "src/hooks/UseRealtimeAlertsResolver.js", "src/hooks/useScheduleRouteResolver.js"],
+      exclude: [
+        "src/index.jsx",
+        "src/hooks/UseRealtimeAlertsResolver.js",
+        "src/hooks/useScheduleRouteResolver.js",
+      ],
       thresholds: {
         100: true,
       },

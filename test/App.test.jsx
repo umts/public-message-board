@@ -9,17 +9,17 @@ const gtfsReactHooksMocks = vi.hoisted(() => ({
   useFetchResolver: vi.fn(() => null),
 }));
 
-const helpers = vi.hoisted(() => ({
+const wrappers = vi.hoisted(() => ({
   useScheduleRouteResolver: vi.fn(),
   useRealtimeAlertsResolver: vi.fn(),
 }));
 
 vi.mock("../src/hooks/useScheduleRouteResolver.js", () => ({
-  default: helpers.useScheduleRouteResolver,
+  default: wrappers.useScheduleRouteResolver,
 }));
 
 vi.mock("../src/hooks/useRealtimeAlertsResolver.js", () => ({
-  default: helpers.useRealtimeAlertsResolver,
+  default: wrappers.useRealtimeAlertsResolver,
 }));
 
 vi.mock("gtfs-react-hooks", () => ({
@@ -29,8 +29,8 @@ vi.mock("gtfs-react-hooks", () => ({
 }));
 
 function mockGtfs({ schedule, alerts }) {
-  helpers.useScheduleRouteResolver.mockReturnValue(schedule);
-  helpers.useRealtimeAlertsResolver.mockReturnValue(alerts);
+  wrappers.useScheduleRouteResolver.mockReturnValue(schedule);
+  wrappers.useRealtimeAlertsResolver.mockReturnValue(alerts);
 }
 
 function clearSearchParams() {

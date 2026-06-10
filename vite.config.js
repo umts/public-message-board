@@ -18,7 +18,7 @@ export default defineConfig({
       include: ["src/**/*.js", "src/**/*.jsx"],
       exclude: [
         "src/index.jsx",
-        "src/hooks/UseRealtimeAlertsResolver.js",
+        "src/hooks/useRealtimeAlertsResolver.js",
         "src/hooks/useScheduleRouteResolver.js",
       ],
       thresholds: {

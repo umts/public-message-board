@@ -2,10 +2,9 @@ import PublicMessage from "./components/PublicMessage.jsx";
 import PublicMessageBoard from "./components/PublicMessageBoard.jsx";
 import useConfig from "./hooks/useConfig.js";
 import useDynamicHeight from "./hooks/useDynamicHeight.js";
-import { useGtfsRealtime, useGtfsScheduleCsv } from "gtfs-react-hooks";
+import useGtfsScheduleRoutes from "./hooks/useGtfsScheduleRoutes.js";
+import useGtfsRealtimeAlerts from "./hooks/useGtfsRealtimeAlerts.js";
 import publicMessagesFromGtfs from "./utils/publicMessagesFromGtfs.js";
-import useScheduleRouteResolver from "./hooks/useScheduleRouteResolver.js";
-import useRealtimeAlertsResolver from "./hooks/useRealtimeAlertsResolver.js";
 
 /**
  * Application entrypoint.
@@ -17,11 +16,8 @@ export default function App() {
   useDynamicHeight();
   const { gtfsScheduleRoutesUrl, gtfsRealtimeAlertsUrl, routesFilter } = useConfig();
 
-  const fetchGtfsRoutes = useScheduleRouteResolver(gtfsScheduleRoutesUrl);
-  const gtfsRoutes = useGtfsScheduleCsv(fetchGtfsRoutes, 24 * 60 * 60 * 1000);
-
-  const fetchGtfsRealtime = useRealtimeAlertsResolver(gtfsRealtimeAlertsUrl);
-  const gtfsRealtimeAlerts = useGtfsRealtime(fetchGtfsRealtime, 30 * 1000);
+  const gtfsRoutes = useGtfsScheduleRoutes(gtfsScheduleRoutesUrl);
+  const gtfsRealtimeAlerts = useGtfsRealtimeAlerts(gtfsRealtimeAlertsUrl);
 
   const publicMessages = publicMessagesFromGtfs(
     gtfsRoutes,

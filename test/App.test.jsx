@@ -3,34 +3,22 @@ import { page } from "vitest/browser";
 import "vitest-browser-react";
 import App from "../src/App.jsx";
 
-const gtfsReactHooksMocks = vi.hoisted(() => ({
-  useGtfsRealtime: vi.fn((data) => data),
-  useGtfsScheduleCsv: vi.fn((data) => data),
-  useFetchResolver: vi.fn(() => null),
+const gtfsMocks = vi.hoisted(() => ({
+  useGtfsScheduleRoutes: vi.fn(),
+  useGtfsRealtimeAlerts: vi.fn(),
 }));
 
-const wrappers = vi.hoisted(() => ({
-  useScheduleRouteResolver: vi.fn(),
-  useRealtimeAlertsResolver: vi.fn(),
+vi.mock("../src/hooks/useGtfsScheduleRoutes.js", () => ({
+  default: gtfsMocks.useGtfsScheduleRoutes,
 }));
 
-vi.mock("../src/hooks/useScheduleRouteResolver.js", () => ({
-  default: wrappers.useScheduleRouteResolver,
-}));
-
-vi.mock("../src/hooks/useRealtimeAlertsResolver.js", () => ({
-  default: wrappers.useRealtimeAlertsResolver,
-}));
-
-vi.mock("gtfs-react-hooks", () => ({
-  useGtfsRealtime: gtfsReactHooksMocks.useGtfsRealtime,
-  useGtfsScheduleCsv: gtfsReactHooksMocks.useGtfsScheduleCsv,
-  useFetchResolver: gtfsReactHooksMocks.useFetchResolver,
+vi.mock("../src/hooks/useGtfsRealtimeAlerts.js", () => ({
+  default: gtfsMocks.useGtfsRealtimeAlerts,
 }));
 
 function mockGtfs({ schedule, alerts }) {
-  wrappers.useScheduleRouteResolver.mockReturnValue(schedule);
-  wrappers.useRealtimeAlertsResolver.mockReturnValue(alerts);
+  gtfsMocks.useGtfsScheduleRoutes.mockReturnValue(schedule);
+  gtfsMocks.useGtfsRealtimeAlerts.mockReturnValue(alerts);
 }
 
 function clearSearchParams() {

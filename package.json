@@ -33,5 +33,9 @@
     "stylelint-config-standard": "*",
     "vitest": "*",
     "vitest-browser-react": "*"
+  },
+  "allowScripts": {
+    "fsevents@2.3.2": true,
+    "fsevents@2.3.3": true
   }
 }

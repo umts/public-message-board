@@ -6,6 +6,8 @@ import useGtfsScheduleRoutes from "./hooks/useGtfsScheduleRoutes.js";
 import useGtfsRealtimeAlerts from "./hooks/useGtfsRealtimeAlerts.js";
 import publicMessagesFromGtfs from "./utils/publicMessagesFromGtfs.js";
 
+const ALL_ROUTES = [{ id: "all", abbreviation: "ALL" }];
+
 /**
  * Application entrypoint.
  *
@@ -33,11 +35,9 @@ export default function App() {
         <PublicMessage description="There are no detours currently in effect." />
       ) : (
         publicMessages.map(({ id, routes, ...message }) => (
-          <PublicMessage key={id} routes={routes.length > 0 ? routes : allRoutes} {...message} />
+          <PublicMessage key={id} routes={routes.length > 0 ? routes : ALL_ROUTES} {...message} />
         ))
       )}
     </PublicMessageBoard>
   );
 }
-
-const allRoutes = [{ id: "all", abbreviation: "ALL" }];

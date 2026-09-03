@@ -30,6 +30,10 @@ export default defineConfig({
     "oxc/no-optional-chaining": "off",
     "oxc/no-rest-spread-properties": "off",
     "react/react-in-jsx-scope": "off",
+    "eslint/no-use-before-define": [
+      "error",
+      { functions: false, classes: true, variables: true, allowNamedExports: false },
+    ],
   },
   overrides: [
     {

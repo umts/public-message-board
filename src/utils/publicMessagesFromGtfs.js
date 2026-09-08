@@ -84,10 +84,10 @@ function sortGtfs(gtfsEntities) {
           ...gtfsEntity.alert,
           informedEntity: gtfsEntity.alert.informedEntity.toSorted((route1, route2) => {
             const sortOrder1 = route1.routeSortOrder
-              ? Number.parseInt(route1.routeSortOrder, 10)
+              ? Math.trunc(Number(route1.routeSortOrder))
               : Infinity;
             const sortOrder2 = route2.routeSortOrder
-              ? Number.parseInt(route2.routeSortOrder, 10)
+              ? Math.trunc(Number(route2.routeSortOrder))
               : Infinity;
             return sortOrder1 - sortOrder2;
           }),

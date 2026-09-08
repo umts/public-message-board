@@ -7,6 +7,11 @@ import { useMemo } from "react";
  * @property {[String]|null} routesFilter - a list of route abbreviations to be used as a whitelist.
  */
 
+const DEFAULT_GTFS_ROUTE_URL = new URL("https://gtfs-cache.admin.umass.edu/gtfs/routes");
+const DEFAULT_GTFS_REALTIME_ALERTS_URL = new URL(
+  "https://gtfs-cache.admin.umass.edu/gtfs-rt/alerts",
+);
+
 /**
  * Hook responsible for parsing application configuration options from the window location's current search query.
  *
@@ -40,11 +45,6 @@ export default function useConfig() {
     };
   }, []);
 }
-
-const DEFAULT_GTFS_ROUTE_URL = new URL("https://gtfs-cache.admin.umass.edu/gtfs/routes");
-const DEFAULT_GTFS_REALTIME_ALERTS_URL = new URL(
-  "https://gtfs-cache.admin.umass.edu/gtfs-rt/alerts",
-);
 
 /**
  * Parses a URL, returning null if a parsing error occurs.
